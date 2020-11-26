@@ -1,16 +1,18 @@
-import dotenv from 'dotenv';
-import express, { Express } from 'express';
-import morgan from 'morgan';
-import bodyParser from 'body-parser';
+import dotenv from "dotenv";
+import express, { Express } from "express";
+import morgan from "morgan";
+import bodyParser from "body-parser";
 
-import routes from './routes';
+import routes from "./routes";
+import routesApi from "./microservice/api/routes";
+import setupSequelize from "../src/services/setupSequelize";
 
 dotenv.config();
 
 class Server {
-  private express: Express
+  private express: Express;
 
-  private PORT = process.env.PORT
+  private PORT = process.env.PORT;
 
   constructor() {
     this.express = express();
@@ -21,19 +23,25 @@ class Server {
   init() {
     this.middlewares();
     this.routes();
+    this.database();
 
-    this.express.listen(this.PORT, () => console.log(`server online in port ${this.PORT}`));
+    this.express.listen(this.PORT, () =>
+      console.log(`server online in port ${this.PORT}`)
+    );
   }
 
-  // database() {}
+  async database() {
+    await setupSequelize();
+  }
 
   middlewares() {
-    this.express.use(morgan('dev'));
+    this.express.use(morgan("dev"));
     this.express.use(bodyParser.json());
   }
 
   routes() {
     this.express.use(routes);
+    this.express.use(routesApi);
   }
 }
 
