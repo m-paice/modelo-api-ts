@@ -4,27 +4,39 @@ export default (resource) => {
   const index = async (req: Request, res: Response) => {
     const query = {};
 
-    const response = await resource.findMany(query).then((data) => data);
+    try {
+      const response = await resource.findMany(query).then((data) => data);
 
-    return res.json(response);
+      return res.json(response);
+    } catch (error) {
+      return res.status(500).json(error);
+    }
   };
 
   const show = async (req: Request, res: Response) => {
     const { id } = req.params;
     const query = {};
 
-    const response = await resource.findById(id, query).then((data) => data);
+    try {
+      const response = await resource.findById(id, query).then((data) => data);
 
-    return res.json(response);
+      return res.json(response);
+    } catch (error) {
+      return res.status(500).json(error);
+    }
   };
 
   const create = async (req: Request, res: Response) => {
     const data = req.body;
     const query = {};
 
-    const response = await resource.create(data, query).then((data) => data);
+    try {
+      const response = await resource.create(data, query).then((data) => data);
 
-    return res.json(response);
+      return res.json(response);
+    } catch (error) {
+      return res.status(500).json(error);
+    }
   };
 
   const update = async (req: Request, res: Response) => {
@@ -32,18 +44,27 @@ export default (resource) => {
     const data = req.body;
     const query = {};
 
-    const response = await resource
-      .updateById(id, data, query)
-      .then((data) => data);
+    try {
+      const response = await resource
+        .updateById(id, data, query)
+        .then((data) => data);
 
-    return res.json(response);
+      return res.json(response);
+    } catch (error) {
+      return res.status(500).json(error);
+    }
   };
 
   const destroy = async (req: Request, res: Response) => {
     const { id } = req.params;
 
-    const response = await resource.destroyById(id).then((m) => !!m);
-    return res.json(response);
+    try {
+      const response = await resource.destroyById(id).then((data) => !!data);
+
+      return res.json(response);
+    } catch (error) {
+      return res.status(500).json(error);
+    }
   };
 
   return {
