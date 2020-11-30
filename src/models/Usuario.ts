@@ -2,8 +2,6 @@ import Sequelize from "sequelize";
 
 import sequelize from "../services/sequelize";
 
-const { DataTypes } = Sequelize;
-
 export type UsuarioInstance = {
   id: string;
   login: string;
@@ -24,24 +22,24 @@ const Usuario = sequelize.define(
   "Usuario",
   {
     id: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
+      type: Sequelize.UUID,
+      defaultValue: Sequelize.UUIDV4,
       primaryKey: true,
     },
-    login: DataTypes.STRING,
-    senha: DataTypes.STRING,
-    nome: DataTypes.STRING,
-    nascimento: DataTypes.STRING,
-    email: DataTypes.STRING,
-    celular: DataTypes.STRING,
-    pessoais: DataTypes.JSONB,
-    token: DataTypes.JSONB,
+    login: Sequelize.STRING,
+    senha: Sequelize.STRING,
+    nome: Sequelize.STRING,
+    nascimento: Sequelize.STRING,
+    email: Sequelize.STRING,
+    celular: Sequelize.STRING,
+    pessoais: Sequelize.JSONB,
+    token: Sequelize.JSONB,
     createdAt: {
-      type: DataTypes.DATE,
+      type: Sequelize.DATE,
       allowNull: false,
     },
     updatedAt: {
-      type: DataTypes.DATE,
+      type: Sequelize.DATE,
       allowNull: false,
     },
   },

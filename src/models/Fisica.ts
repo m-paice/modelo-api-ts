@@ -2,8 +2,6 @@ import Sequelize from "sequelize";
 
 import sequelize from "../services/sequelize";
 
-const { DataTypes } = Sequelize;
-
 export type FisicaInstance = {
   id: string;
   cpf: string;
@@ -15,17 +13,17 @@ const Fisica = sequelize.define(
   "Fisica",
   {
     id: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
+      type: Sequelize.UUID,
+      defaultValue: Sequelize.UUIDV4,
       primaryKey: true,
     },
-    cpf: DataTypes.STRING,
+    cpf: Sequelize.STRING,
     createdAt: {
-      type: DataTypes.DATE,
+      type: Sequelize.DATE,
       allowNull: false,
     },
     updatedAt: {
-      type: DataTypes.DATE,
+      type: Sequelize.DATE,
       allowNull: false,
     },
   },

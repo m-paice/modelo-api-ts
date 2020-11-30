@@ -2,8 +2,6 @@ import Sequelize from "sequelize";
 
 import sequelize from "../services/sequelize";
 
-const { DataTypes } = Sequelize;
-
 export type LojistaInstance = {
   id: string;
   razaoSocial: string;
@@ -20,22 +18,22 @@ const Lojista = sequelize.define(
   "Lojista",
   {
     id: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
+      type: Sequelize.UUID,
+      defaultValue: Sequelize.UUIDV4,
       primaryKey: true,
     },
-    razaoSocial: DataTypes.STRING,
-    fantasia: DataTypes.STRING,
-    cnpj: DataTypes.STRING,
-    inscricaoMunicipal: DataTypes.STRING,
-    inscricaoEstadual: DataTypes.STRING,
-    dataFundacao: DataTypes.DATE,
+    razaoSocial: Sequelize.STRING,
+    fantasia: Sequelize.STRING,
+    cnpj: Sequelize.STRING,
+    inscricaoMunicipal: Sequelize.STRING,
+    inscricaoEstadual: Sequelize.STRING,
+    dataFundacao: Sequelize.DATE,
     createdAt: {
-      type: DataTypes.DATE,
+      type: Sequelize.DATE,
       allowNull: false,
     },
     updatedAt: {
-      type: DataTypes.DATE,
+      type: Sequelize.DATE,
       allowNull: false,
     },
   },

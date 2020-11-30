@@ -25,14 +25,14 @@ export const promiseHandler = (fn: HandlerFunction) => (
   // return Promise
   if (resultOrPromise && resultOrPromise.then) {
     resultOrPromise
-      .then((result) => {
+      .then((result: any) => {
         if (result === true) {
           res.sendStatus(200);
           return;
         }
         res.json(result);
       })
-      .catch((err) => next(err));
+      .catch((err: any) => next(err));
 
     return;
   }

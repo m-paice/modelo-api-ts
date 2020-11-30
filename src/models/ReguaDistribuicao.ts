@@ -2,8 +2,6 @@ import Sequelize from "sequelize";
 
 import sequelize from "../services/sequelize";
 
-const { DataTypes } = Sequelize;
-
 export type ReguaDistribuicaoInstance = {
   id: string;
   tipo: string;
@@ -19,21 +17,21 @@ const ReguaDistribuicao = sequelize.define(
   "ReguaDistribuicao",
   {
     id: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
+      type: Sequelize.UUID,
+      defaultValue: Sequelize.UUIDV4,
       primaryKey: true,
     },
-    tipo: DataTypes.STRING,
-    regra: DataTypes.STRING,
-    percentual: DataTypes.INTEGER,
-    fixa: DataTypes.STRING,
-    transacao: DataTypes.JSONB,
+    tipo: Sequelize.STRING,
+    regra: Sequelize.STRING,
+    percentual: Sequelize.INTEGER,
+    fixa: Sequelize.STRING,
+    transacao: Sequelize.JSONB,
     createdAt: {
-      type: DataTypes.DATE,
+      type: Sequelize.DATE,
       allowNull: false,
     },
     updatedAt: {
-      type: DataTypes.DATE,
+      type: Sequelize.DATE,
       allowNull: false,
     },
   },

@@ -2,8 +2,6 @@ import Sequelize from "sequelize";
 
 import sequelize from "../services/sequelize";
 
-const { DataTypes } = Sequelize;
-
 export type AcionistasInstance = {
   id: string;
   nome: string;
@@ -14,24 +12,24 @@ export type AcionistasInstance = {
   updatedAt?: Date;
 };
 
-const Acionistas = sequelize.define(
+const Acionistas = sequelize.define<AcionistasInstance, any, any>(
   "Acionistas",
   {
     id: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
+      type: Sequelize.UUID,
+      defaultValue: Sequelize.UUIDV4,
       primaryKey: true,
     },
-    nome: DataTypes.STRING,
-    quota: DataTypes.STRING,
-    cpf: DataTypes.STRING,
-    dataNascimento: DataTypes.DATE,
+    nome: Sequelize.STRING,
+    quota: Sequelize.STRING,
+    cpf: Sequelize.STRING,
+    dataNascimento: Sequelize.DATE,
     createdAt: {
-      type: DataTypes.DATE,
+      type: Sequelize.DATE,
       allowNull: false,
     },
     updatedAt: {
-      type: DataTypes.DATE,
+      type: Sequelize.DATE,
       allowNull: false,
     },
   },

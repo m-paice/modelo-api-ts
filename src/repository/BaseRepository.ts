@@ -1,9 +1,9 @@
 import { Model, Options } from "sequelize";
 
 class BaseRepository<T> {
-  private readonly model;
+  private readonly model: any;
 
-  constructor(model: Model<T, any>) {
+  constructor(model: any) {
     this.model = model;
   }
 

@@ -1,11 +1,14 @@
+import { Model } from "sequelize";
 import { Request, Response } from "express";
 
-export default (resource) => {
+export default <T>(resource: any) => {
   const index = async (req: Request, res: Response) => {
     const query = {};
 
     try {
-      const response = await resource.findMany(query).then((data) => data);
+      const response = await resource
+        .findMany(query)
+        .then((data: Partial<T>) => data);
 
       return res.json(response);
     } catch (error) {
@@ -18,7 +21,9 @@ export default (resource) => {
     const query = {};
 
     try {
-      const response = await resource.findById(id, query).then((data) => data);
+      const response = await resource
+        .findById(id, query)
+        .then((data: Partial<T>) => data);
 
       return res.json(response);
     } catch (error) {
@@ -31,7 +36,9 @@ export default (resource) => {
     const query = {};
 
     try {
-      const response = await resource.create(data, query).then((data) => data);
+      const response = await resource
+        .create(data, query)
+        .then((data: Partial<T>) => data);
 
       return res.json(response);
     } catch (error) {
@@ -47,7 +54,7 @@ export default (resource) => {
     try {
       const response = await resource
         .updateById(id, data, query)
-        .then((data) => data);
+        .then((data: Partial<T>) => data);
 
       return res.json(response);
     } catch (error) {
@@ -59,7 +66,9 @@ export default (resource) => {
     const { id } = req.params;
 
     try {
-      const response = await resource.destroyById(id).then((data) => !!data);
+      const response = await resource
+        .destroyById(id)
+        .then((data: Partial<T>) => !!data);
 
       return res.json(response);
     } catch (error) {

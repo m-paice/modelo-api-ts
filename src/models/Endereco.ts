@@ -2,8 +2,6 @@ import Sequelize from "sequelize";
 
 import sequelize from "../services/sequelize";
 
-const { DataTypes } = Sequelize;
-
 export type EnderecoInstance = {
   id: string;
   cep: string;
@@ -21,17 +19,17 @@ const Endereco = sequelize.define(
   "Endereco",
   {
     id: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
+      type: Sequelize.UUID,
+      defaultValue: Sequelize.UUIDV4,
       primaryKey: true,
     },
-    cep: DataTypes.STRING,
-    rua: DataTypes.STRING,
-    numero: DataTypes.STRING,
-    complemento: DataTypes.STRING,
-    bairro: DataTypes.STRING,
-    cidade: DataTypes.STRING,
-    uf: DataTypes.STRING,
+    cep: Sequelize.STRING,
+    rua: Sequelize.STRING,
+    numero: Sequelize.STRING,
+    complemento: Sequelize.STRING,
+    bairro: Sequelize.STRING,
+    cidade: Sequelize.STRING,
+    uf: Sequelize.STRING,
   },
   {
     tableName: "endereco",
