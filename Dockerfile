@@ -7,6 +7,6 @@ COPY node_modules /app/node_modules/
 COPY package*.json /app/
 COPY build /app/
 COPY .env /app/
-COPY .sequielizerc /app/
+COPY .sequelizerc /app/
 
 CMD ["npm", "start"]
