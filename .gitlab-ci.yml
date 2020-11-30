@@ -1,0 +1,126 @@
+.job-env: &env_definitions
+  - export BRANCH=`echo $CI_COMMIT_REF_NAME | sed 's/\//-/'`
+  - |
+    if [ "$CI_COMMIT_REF_NAME" == "producao" ] ; then
+      if [ "x$URL_PROD_PREFIX" == "x" ] ; then
+        echo "Você precisa definir a variavel URL_PROD_PREFIX no gitlab em CI/CD do projeto."
+        exit 1
+      fi
+      export URL_PREFIX=$URL_PROD_PREFIX
+    elif [ "$CI_COMMIT_REF_NAME" == "master" ] ; then
+      if [ "x$URL_MASTER_PREFIX" == "x" ] ; then
+        echo "Você precisa definir a variavel URL_MASTER_PREFIX no gitlab em CI/CD do projeto."
+        exit 1
+      fi
+      export URL_PREFIX=$URL_MASTER_PREFIX
+    else
+      export URL_PREFIX="$BRANCH.usign.io"
+    fi
+  - export URL_BASE="https://api.$URL_PREFIX"
+  - export BUILD_NUMBER=$CI_PIPELINE_ID
+  - export REGISTRY_IMAGE_NAME="$REGISTRY_IMAGE:1.0.$CI_PIPELINE_ID.$BRANCH"
+  - export REGISTRY_IMAGE_NAME_LATEST="$REGISTRY_IMAGE:latest.$BRANCH"
+  - |
+    if [ -x /usr/bin/node ] ; then
+       export NPM_PACKAGE_NAME=$(node -p "require('./package.json').name")
+       export NPM_PACKAGE_VERSION=$(node -p "require('./package.json').version")
+    fi
+
+.job-deploy: &deploy_containers
+  - |
+    if [ "x$REGISTRY_IMAGE" == "x" ] ; then
+      echo "A variavel REGISTRY_IMAGE precisa estar especificada para o deploy ser possível."
+      exit 1
+    fi
+    if [ "x$BRANCH" == "x" ] ; then
+      echo "Não consegui determinar o BRANCH"
+      exit 1
+    else
+      if [ "x$BRANCH" == "xmaster" ] ; then
+        SCALETO=$QA_SCALE
+      else
+        SCALETO=$PR_SCALE
+      fi
+    fi
+    if [ "x$SCALETO" = "x" ] ; then
+      SCALETO=1
+    fi
+    CONTAINERS=`docker service ls --format "{{.ID}},{{.Image}},{{.Name}}" | grep -i "$REGISTRY_IMAGE:.*$BRANCH"`
+    for c in $CONTAINERS ; do
+      CONTAINERID=`echo $c | cut -d "," -f 1`
+      CONTAINERIMAGE=`echo $c | cut -d "," -f 2`
+      CONTAINERNAME=`echo $c | cut -d "," -f 3`
+      echo "Atualizando: $CONTAINERNAME, $CONTAINERIMAGE -> $REGISTRY_IMAGE_NAME"
+      if [ "x$SCALETO" = "x1" ] ; then
+        docker service update --with-registry-auth --force --image $REGISTRY_IMAGE_NAME $CONTAINERID
+      else
+        docker service update --with-registry-auth --force --replicas 1 $CONTAINERID
+        docker service update --with-registry-auth --force --image $REGISTRY_IMAGE_NAME $CONTAINERID
+        docker service update --with-registry-auth --force --replicas $SCALETO $CONTAINERID
+      fi
+    done
+
+cache:
+  key: "$CI_COMMIT_SHORT_SHA"
+  paths:
+    - ./.yarn-offline
+    - dist
+    - build
+    - node_modules
+    - yarn.lock
+
+stages:
+  - checks
+  - build
+  - image
+  - deploy
+
+commitlint:
+  stage: checks
+  image: nsfilho/commitlint:latest
+  script:
+    - check.sh
+
+install:
+  stage: build
+  image: node:14
+  script:
+    - *env_definitions
+    - yarn install
+    - cp .env.$BRANCH .env
+    - yarn build
+
+build:
+  stage: image
+  image: docker:19-dind
+  script:
+    - *env_definitions
+    - docker build -t $REGISTRY_IMAGE_NAME -t $REGISTRY_IMAGE_NAME_LATEST .
+
+qa:
+  stage: deploy
+  only:
+    refs:
+      - master
+  image: docker:19-dind
+  environment:
+    name: qa
+    url: https://api.qa.credas.com.br
+  script:
+    - *env_definitions
+    - *deploy_containers
+  when: manual
+
+prod:
+  stage: deploy
+  only:
+    refs:
+      - producao
+  image: docker:19-dind
+  environment:
+    name: prod
+    url: https://api.prod.credas.com.br
+  script:
+    - *env_definitions
+    - *deploy_containers
+  when: manual
