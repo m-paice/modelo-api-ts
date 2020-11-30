@@ -1,4 +1,4 @@
-import { Model, Options } from 'sequelize';
+import { Model, Options } from "sequelize";
 
 class BaseRepository<T> {
   private readonly model;
@@ -19,7 +19,7 @@ class BaseRepository<T> {
     return this.model.findByPk(id, options);
   }
 
-  create(data: T, options: Options): Promise<T> {
+  create(data: Partial<T>, options: Options): Promise<T> {
     return this.model.create(data, options);
   }
 
@@ -28,15 +28,19 @@ class BaseRepository<T> {
   }
 
   updateById(id: string, data: T, options: Options): Promise<T> {
-    return this.findById(id, options).then((model) => this.update(model, data, options));
+    return this.findById(id, options).then((model) =>
+      this.update(model, data, options)
+    );
   }
 
-  destroy(model:any, options: Options) {
+  destroy(model: any, options: Options) {
     return model.destroy(options);
   }
 
   destroyById(id: string, options: Options) {
-    return this.findById(id, options).then((model) => this.destroy(model, options));
+    return this.findById(id, options).then((model) =>
+      this.destroy(model, options)
+    );
   }
 }
 

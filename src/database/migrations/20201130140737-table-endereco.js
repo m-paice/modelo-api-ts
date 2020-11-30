@@ -1,26 +1,26 @@
 module.exports = {
   up: (queryInterface, Sequelize) =>
-    queryInterface.createTable("address", {
+    queryInterface.createTable("endereco", {
       id: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true,
         allowNull: false,
       },
-      userId: {
+      usuarioId: {
         type: Sequelize.UUID,
         allowNull: false,
         references: {
-          model: "users",
+          model: "usuario",
           key: "id",
         },
       },
-      zipcode: Sequelize.STRING,
-      street: Sequelize.STRING,
-      number: Sequelize.STRING,
-      complement: Sequelize.STRING,
-      neighborhood: Sequelize.STRING,
-      city: Sequelize.STRING,
+      cep: Sequelize.STRING,
+      rua: Sequelize.STRING,
+      numero: Sequelize.STRING,
+      complemento: Sequelize.STRING,
+      bairro: Sequelize.STRING,
+      cidade: Sequelize.STRING,
       uf: Sequelize.STRING,
       createdAt: {
         type: Sequelize.DATE,
@@ -32,5 +32,5 @@ module.exports = {
       },
     }),
 
-  down: (queryInterface, Sequelize) => queryInterface.dropTable("address"),
+  down: (queryInterface, Sequelize) => queryInterface.dropTable("endereco"),
 };

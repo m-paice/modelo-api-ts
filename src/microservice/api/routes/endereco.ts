@@ -1,9 +1,9 @@
 import { Router } from "express";
 
 import resourceController from "../../../resource/controller";
-import userResource from "../../../resource/Users";
+import enderecoResource from "../../../resource/Endereco";
 
-const controller = resourceController(userResource);
+const controller = resourceController(enderecoResource);
 
 const router = Router();
 

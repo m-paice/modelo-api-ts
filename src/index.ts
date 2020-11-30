@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import express, { Express } from "express";
 import morgan from "morgan";
 import bodyParser from "body-parser";
+import cors from "cors";
 
 import routes from "./routes";
 import routesApi from "./microservice/api/routes";
@@ -35,6 +36,7 @@ class Server {
   }
 
   middlewares() {
+    this.express.use(cors());
     this.express.use(morgan("dev"));
     this.express.use(bodyParser.json());
   }

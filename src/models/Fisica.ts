@@ -4,26 +4,22 @@ import sequelize from "../services/sequelize";
 
 const { DataTypes } = Sequelize;
 
-export type UserInstance = {
-  id?: string;
-  name: string;
-  username: string;
-  password: string;
+export type FisicaInstance = {
+  id: string;
+  cpf: string;
   createdAt?: Date;
   updatedAt?: Date;
 };
 
-const User = sequelize.define(
-  "User",
+const Fisica = sequelize.define(
+  "Fisica",
   {
     id: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
-    name: DataTypes.STRING,
-    username: DataTypes.STRING,
-    password: DataTypes.STRING,
+    cpf: DataTypes.STRING,
     createdAt: {
       type: DataTypes.DATE,
       allowNull: false,
@@ -34,8 +30,15 @@ const User = sequelize.define(
     },
   },
   {
-    tableName: "users",
+    tableName: "fisica",
   }
 );
 
-export default User;
+Fisica.associate = (models) => {
+  Fisica.belongsTo(models.Usuario, {
+    foreignKey: "usuarioId",
+    as: "usuario",
+  });
+};
+
+export default Fisica;
