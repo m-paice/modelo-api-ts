@@ -1,6 +1,6 @@
-import Sequelize from "sequelize";
+import Sequelize from 'sequelize';
 
-import sequelize from "../services/sequelize";
+import sequelize from '../services/sequelize';
 
 export type UsuarioInstance = {
   id: string;
@@ -19,7 +19,7 @@ export type UsuarioInstance = {
 };
 
 const Usuario = sequelize.define(
-  "Usuario",
+  'Usuario',
   {
     id: {
       type: Sequelize.UUID,
@@ -44,8 +44,8 @@ const Usuario = sequelize.define(
     },
   },
   {
-    tableName: "usuario",
-  }
+    tableName: 'usuario',
+  },
 );
 
 export default Usuario;

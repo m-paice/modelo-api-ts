@@ -1,6 +1,6 @@
-import Sequelize from "sequelize";
+import Sequelize from 'sequelize';
 
-import sequelize from "../services/sequelize";
+import sequelize from '../services/sequelize';
 
 export type DadosBancariosInstance = {
   id: string;
@@ -16,7 +16,7 @@ export type DadosBancariosInstance = {
 };
 
 const DadosBancarios = sequelize.define(
-  "DadosBancarios",
+  'DadosBancarios',
   {
     id: {
       type: Sequelize.UUID,
@@ -40,14 +40,14 @@ const DadosBancarios = sequelize.define(
     },
   },
   {
-    tableName: "dadosbancarios",
-  }
+    tableName: 'dadosbancarios',
+  },
 );
 
 DadosBancarios.associate = (models) => {
   DadosBancarios.belongsTo(models.Lojista, {
-    foreignKey: "lojistaId",
-    as: "lojista",
+    foreignKey: 'lojistaId',
+    as: 'lojista',
   });
 };
 

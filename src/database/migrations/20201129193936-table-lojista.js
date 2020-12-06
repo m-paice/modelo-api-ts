@@ -1,11 +1,19 @@
 module.exports = {
   up: (queryInterface, Sequelize) =>
-    queryInterface.createTable("lojista", {
+    queryInterface.createTable('lojista', {
       id: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true,
         allowNull: false,
+      },
+      usuarioId: {
+        type: Sequelize.UUID,
+        allowNull: false,
+        references: {
+          model: 'usuario',
+          key: 'id',
+        },
       },
       razaoSocial: {
         type: Sequelize.STRING,
@@ -41,5 +49,5 @@ module.exports = {
       },
     }),
 
-  down: (queryInterface, Sequelize) => queryInterface.dropTable("lojista"),
+  down: (queryInterface, Sequelize) => queryInterface.dropTable('lojista'),
 };

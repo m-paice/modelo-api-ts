@@ -1,6 +1,6 @@
-import Sequelize from "sequelize";
+import Sequelize from 'sequelize';
 
-import sequelize from "../services/sequelize";
+import sequelize from '../services/sequelize';
 
 export type EnderecoInstance = {
   id: string;
@@ -16,7 +16,7 @@ export type EnderecoInstance = {
 };
 
 const Endereco = sequelize.define(
-  "Endereco",
+  'Endereco',
   {
     id: {
       type: Sequelize.UUID,
@@ -32,14 +32,14 @@ const Endereco = sequelize.define(
     uf: Sequelize.STRING,
   },
   {
-    tableName: "endereco",
-  }
+    tableName: 'endereco',
+  },
 );
 
 Endereco.associate = (models) => {
   Endereco.belongsTo(models.Usuario, {
-    foreignKey: "usuarioId",
-    as: "usuario",
+    foreignKey: 'usuarioId',
+    as: 'usuario',
   });
 };
 

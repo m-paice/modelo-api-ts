@@ -66,20 +66,16 @@ export default class BaseResource<TModel extends Instance> {
     return this.getRepository().findOne(query);
   }
 
-  create(data: TModel, options: Options = {}): Promise<TModel> {
+  create(data: Partial<TModel>, options: Options = {}): Promise<TModel> {
     return this.getRepository()
       .create(data, options)
-      .then((model) => {
-        return model;
-      });
+      .then((model) => model);
   }
 
   update(model: TModel, data: TModel, options: Options = {}) {
     return this.getRepository()
       .update(model, data, options)
-      .then((model) => {
-        return model;
-      });
+      .then((model) => model);
   }
 
   updateById(id: string, data: TModel, options: Options = {}) {
@@ -91,9 +87,7 @@ export default class BaseResource<TModel extends Instance> {
   destroy(model: TModel, options: Options = {}) {
     return this.getRepository()
       .destroy(model, options)
-      .then(() => {
-        return model;
-      });
+      .then(() => model);
   }
 
   destroyById(id: string, options: Options = {}) {

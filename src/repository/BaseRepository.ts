@@ -1,4 +1,11 @@
-import { Model, Options } from "sequelize";
+import {
+  Model,
+  Options,
+  FindOptions,
+  CreateOptions,
+  UpdateOptions,
+  DestroyOptions,
+} from "sequelize";
 
 class BaseRepository<T> {
   private readonly model: any;
@@ -7,19 +14,19 @@ class BaseRepository<T> {
     this.model = model;
   }
 
-  findMany(options: Options): Promise<T[]> {
+  findMany(options?: FindOptions<T>): Promise<T[]> {
     return this.model.findAll(options);
   }
 
-  findOne(options: Options): Promise<T> {
+  findOne(options: FindOptions<T>): Promise<T> {
     return this.model.findOne(options);
   }
 
-  findById(id: string, options: Options): Promise<T> {
+  findById(id: string, options?: FindOptions<T>): Promise<T> {
     return this.model.findByPk(id, options);
   }
 
-  create(data: Partial<T>, options: Options): Promise<T> {
+  create(data: Partial<T>, options?: CreateOptions): Promise<T> {
     return this.model.create(data, options);
   }
 

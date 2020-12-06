@@ -1,6 +1,6 @@
-import Sequelize from "sequelize";
+import Sequelize from 'sequelize';
 
-import sequelize from "../services/sequelize";
+import sequelize from '../services/sequelize';
 
 export type ReguaDividaInstance = {
   id: string;
@@ -14,7 +14,7 @@ export type ReguaDividaInstance = {
 };
 
 const ReguaDivida = sequelize.define(
-  "ReguaDivida",
+  'ReguaDivida',
   {
     id: {
       type: Sequelize.UUID,
@@ -36,14 +36,14 @@ const ReguaDivida = sequelize.define(
     },
   },
   {
-    tableName: "reguadivida",
-  }
+    tableName: 'reguadivida',
+  },
 );
 
 ReguaDivida.associate = (models) => {
   ReguaDivida.belongsTo(models.Lojista, {
-    foreignKey: "lojistaId",
-    as: "lojista",
+    foreignKey: 'lojistaId',
+    as: 'lojista',
   });
 };
 

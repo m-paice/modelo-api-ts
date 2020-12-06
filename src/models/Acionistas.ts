@@ -1,6 +1,6 @@
-import Sequelize from "sequelize";
+import Sequelize from 'sequelize';
 
-import sequelize from "../services/sequelize";
+import sequelize from '../services/sequelize';
 
 export type AcionistasInstance = {
   id: string;
@@ -13,7 +13,7 @@ export type AcionistasInstance = {
 };
 
 const Acionistas = sequelize.define<AcionistasInstance, any, any>(
-  "Acionistas",
+  'Acionistas',
   {
     id: {
       type: Sequelize.UUID,
@@ -34,14 +34,14 @@ const Acionistas = sequelize.define<AcionistasInstance, any, any>(
     },
   },
   {
-    tableName: "acionistas",
-  }
+    tableName: 'acionistas',
+  },
 );
 
 Acionistas.associate = (models) => {
   Acionistas.belongsTo(models.Lojista, {
-    foreignKey: "lojistaId",
-    as: "lojista",
+    foreignKey: 'lojistaId',
+    as: 'lojista',
   });
 };
 

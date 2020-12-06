@@ -1,5 +1,5 @@
-import sequelize from "./sequelize";
-import models from "../models";
+import sequelize from './sequelize';
+import models from '../models';
 
 let associated = false;
 

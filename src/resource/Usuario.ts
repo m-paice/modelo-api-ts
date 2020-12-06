@@ -1,13 +1,20 @@
-import usuarioRepository from "../repository/Usuario";
-import { UsuarioInstance } from "../models/Usuario";
-import BaseResource from "./BaseResource";
+import usuarioRepository from '../repository/Usuario';
+import { UsuarioInstance } from '../models/Usuario';
+import BaseResource from './BaseResource';
+
+import consumidorResource from './Consumidor';
+import lojistaResource from './Lojista';
 
 export class UsuarioResource extends BaseResource<UsuarioInstance> {
   constructor() {
     super(usuarioRepository);
   }
 
-  async criarFisica(data: {
+  async auth(data: { login: string; senha: string }) {
+    return usuarioRepository.auth(data);
+  }
+
+  async criarConsumidor(data: {
     cpf: string;
     senha: string;
     nome: string;
@@ -15,18 +22,40 @@ export class UsuarioResource extends BaseResource<UsuarioInstance> {
     email: string;
     celular: string;
   }) {
-    try {
-      const payload = {
-        ...data,
-        login: data.cpf,
-      };
+    const payload = {
+      ...data,
+      login: data.cpf,
+    };
 
-      const response = await await usuarioRepository.create(payload, {});
+    const user = await usuarioRepository.create(payload);
+    await consumidorResource.create({
+      usuarioId: user.id,
+      cpf: data.cpf,
+    });
 
-      return response;
-    } catch (error) {
-      return error;
-    }
+    await this.auth({ login: user.login, senha: user.senha });
+  }
+
+  async criarLojista(data: {
+    cnpj: string;
+    senha: string;
+    nome: string;
+    nascimento: string;
+    email: string;
+    celular: string;
+  }) {
+    const payload = {
+      ...data,
+      login: data.cnpj,
+    };
+
+    const user = await usuarioRepository.create(payload);
+    await lojistaResource.create({
+      usuarioId: user.id,
+      ...data,
+    });
+
+    await this.auth({ login: user.login, senha: user.senha });
   }
 }
 

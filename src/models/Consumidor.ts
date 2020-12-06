@@ -1,16 +1,17 @@
-import Sequelize from "sequelize";
+import Sequelize from 'sequelize';
 
-import sequelize from "../services/sequelize";
+import sequelize from '../services/sequelize';
 
-export type FisicaInstance = {
+export type ConsumidorInstance = {
   id: string;
+  usuarioId: string;
   cpf: string;
   createdAt?: Date;
   updatedAt?: Date;
 };
 
-const Fisica = sequelize.define(
-  "Fisica",
+const Consumidor = sequelize.define(
+  'Consumidor',
   {
     id: {
       type: Sequelize.UUID,
@@ -28,15 +29,15 @@ const Fisica = sequelize.define(
     },
   },
   {
-    tableName: "fisica",
-  }
+    tableName: 'consumidor',
+  },
 );
 
-Fisica.associate = (models) => {
-  Fisica.belongsTo(models.Usuario, {
-    foreignKey: "usuarioId",
-    as: "usuario",
+Consumidor.associate = (models) => {
+  Consumidor.belongsTo(models.Usuario, {
+    foreignKey: 'usuarioId',
+    as: 'usuario',
   });
 };
 
-export default Fisica;
+export default Consumidor;
