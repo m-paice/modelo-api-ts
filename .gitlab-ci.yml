@@ -68,6 +68,7 @@ cache:
     - build
     - node_modules
     - yarn.lock
+    - .env
 
 stages:
   - checks
