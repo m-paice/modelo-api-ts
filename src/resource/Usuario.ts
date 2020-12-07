@@ -25,7 +25,12 @@ export class UsuarioResource extends BaseResource<UsuarioInstance> {
     const payload = {
       ...data,
       login: data.cpf,
+      ativo: true,
     };
+
+    if (!payload.senha) {
+      throw 'password not found. password is required.';
+    }
 
     const user = await usuarioRepository.create(payload);
     await consumidorResource.create({
@@ -47,7 +52,12 @@ export class UsuarioResource extends BaseResource<UsuarioInstance> {
     const payload = {
       ...data,
       login: data.cnpj,
+      ativo: true,
     };
+
+    if (!payload.senha) {
+      throw 'password not found. password is required.';
+    }
 
     const user = await usuarioRepository.create(payload);
     await lojistaResource.create({

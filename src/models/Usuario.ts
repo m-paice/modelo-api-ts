@@ -14,6 +14,7 @@ export type UsuarioInstance = {
     rg?: string;
   };
   token: {};
+  ativo: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 };
@@ -34,6 +35,7 @@ const Usuario = sequelize.define(
     celular: Sequelize.STRING,
     pessoais: Sequelize.JSONB,
     token: Sequelize.JSONB,
+    ativo: Sequelize.BOOLEAN,
     createdAt: {
       type: Sequelize.DATE,
       allowNull: false,
@@ -45,7 +47,7 @@ const Usuario = sequelize.define(
   },
   {
     tableName: 'usuario',
-  },
+  }
 );
 
 export default Usuario;

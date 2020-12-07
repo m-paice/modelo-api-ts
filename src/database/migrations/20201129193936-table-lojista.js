@@ -19,26 +19,11 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      fantasia: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      cnpj: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      inscricaoMunicipal: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      inscricaoEstadual: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      dataFundacao: {
-        type: Sequelize.DATE,
-        allowNull: false,
-      },
+      fantasia: Sequelize.STRING,
+      cnpj: Sequelize.STRING,
+      inscricaoMunicipal: Sequelize.STRING,
+      inscricaoEstadual: Sequelize.STRING,
+      dataFundacao: Sequelize.DATE,
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false,

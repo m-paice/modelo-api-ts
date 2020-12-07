@@ -7,6 +7,7 @@ import Acionistas from './Acionistas';
 import DadosBancarios from './DadosBancarios';
 import ReguaDivida from './ReguaDivida';
 import ReguaDistribuicao from './ReguaDistribuicao';
+import Debito from './Debito';
 
 export default {
   Usuario,
@@ -18,4 +19,5 @@ export default {
   DadosBancarios,
   ReguaDivida,
   ReguaDistribuicao,
+  Debito,
 };

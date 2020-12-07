@@ -1,6 +1,6 @@
 module.exports = {
   up: (queryInterface, Sequelize) =>
-    queryInterface.createTable("usuario", {
+    queryInterface.createTable('usuario', {
       id: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
@@ -11,10 +11,7 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      senha: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
+      senha: Sequelize.STRING,
       nome: {
         type: Sequelize.STRING,
         allowNull: false,
@@ -25,6 +22,7 @@ module.exports = {
       pessoais: Sequelize.JSONB,
       termos: Sequelize.JSONB,
       token: Sequelize.JSONB,
+      ativo: Sequelize.BOOLEAN,
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false,
@@ -35,5 +33,5 @@ module.exports = {
       },
     }),
 
-  down: (queryInterface, Sequelize) => queryInterface.dropTable("usuario"),
+  down: (queryInterface, Sequelize) => queryInterface.dropTable('usuario'),
 };

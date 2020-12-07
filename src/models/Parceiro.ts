@@ -2,7 +2,7 @@ import Sequelize from 'sequelize';
 
 import sequelize from '../services/sequelize';
 
-export type FisicaInstance = {
+export type ParceiroInstance = {
   id: string;
   usuarioId: string;
   descricao: string;
@@ -30,7 +30,7 @@ const Parceiro = sequelize.define(
   },
   {
     tableName: 'parceiro',
-  },
+  }
 );
 
 Parceiro.associate = (models) => {

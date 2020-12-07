@@ -1,9 +1,9 @@
-import { Options } from "sequelize";
-import BaseSequelizeRepository from "../repository/BaseRepository";
+import { Options, FindOptions } from 'sequelize';
+import BaseSequelizeRepository from '../repository/BaseRepository';
 
-export const CREATED = "created";
-export const UPDATED = "updated";
-export const DESTROYED = "destroyed";
+export const CREATED = 'created';
+export const UPDATED = 'updated';
+export const DESTROYED = 'destroyed';
 
 export type Instance = {
   id: string;
@@ -62,7 +62,7 @@ export default class BaseResource<TModel extends Instance> {
     return this.getRepository().findById(id, query);
   }
 
-  findOne(query: Options = {}): Promise<TModel> {
+  findOne(query: FindOptions<TModel>): Promise<TModel> {
     return this.getRepository().findOne(query);
   }
 
