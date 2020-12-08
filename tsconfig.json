@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es2017",
+    "declaration": true,
+    "removeComments": true,
     "module": "commonjs",
     "lib": ["es6"],
     "allowJs": true,
@@ -8,7 +10,9 @@
     "rootDir": "src",
     "strict": true,
     "noImplicitAny": true,
+    "incremental": true,
     "esModuleInterop": true,
     "resolveJsonModule": true
-  }
+  },
+  "exclude": ["node_modules", "build"]
 }

@@ -1,4 +1,4 @@
-require("dotenv").config();
+require('dotenv').config();
 
 module.exports = {
   database: process.env.DB_DATABASE,
@@ -11,4 +11,5 @@ module.exports = {
     operatorsAliases: false,
     timestamps: true,
   },
+  logging: false,
 };

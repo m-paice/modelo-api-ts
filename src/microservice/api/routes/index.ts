@@ -4,8 +4,14 @@ import adminRoutes from './admin';
 import usuarioRoutes from './usuario';
 import parceiroRoutes from './parceiro';
 import debitoRoutes from './debito';
+import lojistaRoutes from './lojista';
+import consumidorRoutes from './consumidor';
+
+import * as loggers from '../../../utils/logger';
 
 const routes = Router();
+
+routes.use(loggers.default.requestLogger);
 
 // const auth = authenticatedRoute()
 
@@ -13,6 +19,8 @@ const routes = Router();
 routes.use('/admin', adminRoutes);
 
 routes.use('/usuario', usuarioRoutes);
+routes.use('/lojista', lojistaRoutes);
+routes.use('/consumidor', consumidorRoutes);
 routes.use('/parceiro', parceiroRoutes);
 routes.use('/debito', debitoRoutes);
 
