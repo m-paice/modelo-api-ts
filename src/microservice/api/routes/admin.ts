@@ -73,7 +73,7 @@ router.post('/upload', upload.single('file'), async (req, res) => {
     item: DataCsv,
     usuarioId: string
   ) => {
-    const { DOCUMENTO, ASSOCIADO } = item;
+    const { ASSOCIADO } = item;
 
     const shopkeeper = await lojistaResource.findOne({
       where: {
@@ -100,6 +100,41 @@ router.post('/upload', upload.single('file'), async (req, res) => {
     return shopkeeper;
   };
 
+  const createDebitIfNotExist = async (
+    item: DataCsv,
+    consumidorId: string,
+    lojistaId: string
+  ) => {
+    const debit = await debitoResource.findOne({
+      where: {
+        seqdiv: item.SEQDIV,
+      },
+    });
+
+    if (!debit) {
+      const response = await debitoResource.create({
+        consumidorId,
+        lojistaId,
+        seqdiv: item.SEQDIV,
+        inclusao: item.INCLUSAO,
+        status: item.STATUS,
+        tipoDoc: item.TIPODOC,
+        contrato: item.CONTRATO,
+        valor: item.VALOR,
+        vencimento: item.VENCIMENTO,
+      });
+
+      logger.default.debugLogger(
+        `debito.CREATED = #${response.id} - ${response.seqdiv}`
+      );
+
+      return response;
+    }
+
+    logger.default.debugLogger(`debito.FOUND = #${debit.id} - ${debit.seqdiv}`);
+    return debit;
+  };
+
   data.forEach(async (item) => {
     // buscar ou criar usuário
     const user = await createUserIfNotExist(item);
@@ -110,22 +145,8 @@ router.post('/upload', upload.single('file'), async (req, res) => {
     // buscar ou criar lojista
     const shookeeper = await createShopkeeperIfNotExist(item, user.id);
 
-    // criar debito (validar se deve buscar débito do usuário)
-    const response = await debitoResource.create({
-      consumidorId: consumer.id,
-      lojistaId: shookeeper.id,
-      seqdiv: item.SEQDIV,
-      inclusao: item.INCLUSAO,
-      status: item.STATUS,
-      tipoDoc: item.TIPODOC,
-      contrato: item.CONTRATO,
-      valor: item.VALOR,
-      vencimento: item.VENCIMENTO,
-    });
-
-    logger.default.debugLogger(
-      `debito.CREATED = #${response.id} - consumidor:${consumer.id} - lojista:${shookeeper.id}`
-    );
+    // criar debito
+    createDebitIfNotExist(item, consumer.id, shookeeper.id);
   });
 
   return res.json({ message: 'ok' });

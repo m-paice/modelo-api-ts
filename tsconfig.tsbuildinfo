@@ -411,7 +411,7 @@
       },
       "./src/config/database.js": {
         "version": "7a1e413d56457e9a4165865b160dd23befa61812b434866cb6f04a49f6822de5",
-        "signature": "76065a3343308a8bbf459f53c5c667f0bf00c79be981bd2f961104ce9c1bb286"
+        "signature": "91b428159e2c477698e8144bcece7b17582ac9622021bf7eee847e970b5bfbe4"
       },
       "./src/services/sequelize.ts": {
         "version": "8b230b2ec99aad2c6bf959000de82116597d301905471f8d136d2392674d0806",
@@ -429,9 +429,13 @@
         "version": "5e4ff755f0ae9b22125a664e568c8536b11faa3b10c5bcd8ca31a05730a74e01",
         "signature": "086aa6867c5c4020da8711c1f02ca3346edcad283db30513a6ba99eb4f63ab68"
       },
+      "./src/services/eventEmitters.ts": {
+        "version": "c83cfa6f1ebdc8b2ce77d6271dc5c02d8051c4063343a6dfa44b1c36bfdfbc66",
+        "signature": "6222bb6d2fdffdd117ea924b35c07cc92a84f8edfc2da0aaff860cb7bb30a782"
+      },
       "./src/resource/BaseResource.ts": {
-        "version": "0f33f5b67a07e5571b479c5d653388a63e04c487005367615a1ac7f2bdb50803",
-        "signature": "b91365f05b0818518565603c7dfb1b8e116e05964a0fdff8325fd0a96a0f8f8a"
+        "version": "54faa84dfd1844444a78be63caa42259533d6d42287f71f749347e88c264e3d0",
+        "signature": "37d10275098cdbd5958ea6c9714bb3697efbeb9e2746e2938276a0e1b936927c"
       },
       "./src/resource/Debito.ts": {
         "version": "9cb5bb24ddfa15a7af76408c32b603edd2b78d7b4a6abce4f46723a97089bc93",
@@ -514,7 +518,7 @@
         "signature": "7031cd6def63e040fdb43fc03ad1c5ba2ce20c68cf1690edbca43d7df36610a3"
       },
       "./src/microservice/api/routes/admin.ts": {
-        "version": "d884e1c42e506be973a65c5637bfa1d919fa83801aaa942ab303db510c024dd5",
+        "version": "930dd8be53370efd51f4688f7123a2a3f5b284db50370fbc642a920b63dc1991",
         "signature": "c106970ee4b686b5ebf0964ea4e0d1b2af02bdecd2d5cfeecedeb7bb5b2f404b"
       },
       "./src/resource/controller.ts": {
@@ -721,8 +725,7 @@
       "allowJs": true,
       "outDir": "./build",
       "rootDir": "./src",
-      "strict": true,
-      "noImplicitAny": true,
+      "strict": false,
       "incremental": true,
       "esModuleInterop": true,
       "resolveJsonModule": true,
@@ -1141,9 +1144,13 @@
         "./src/models/Debito.ts",
         "./src/repository/BaseRepository.ts"
       ],
+      "./src/services/eventEmitters.ts": [
+        "./node_modules/@types/node/events.d.ts"
+      ],
       "./src/resource/BaseResource.ts": [
         "./node_modules/@types/sequelize/index.d.ts",
-        "./src/repository/BaseRepository.ts"
+        "./src/repository/BaseRepository.ts",
+        "./src/services/eventEmitters.ts"
       ],
       "./src/resource/Debito.ts": [
         "./src/repository/Debito.ts",
@@ -1599,9 +1606,6 @@
       "./src/routes.ts": [
         "./node_modules/@types/express-serve-static-core/index.d.ts"
       ],
-      "./node_modules/dotenv/types/index.d.ts": [
-        "./node_modules/@types/node/index.d.ts"
-      ],
       "./node_modules/@types/morgan/index.d.ts": [
         "./node_modules/@types/express/index.d.ts"
       ],
@@ -1799,12 +1803,6 @@
         "./node_modules/@types/continuation-local-storage/index.d.ts",
         "./node_modules/@types/validator/index.d.ts"
       ],
-      "./src/services/sequelize.ts": [
-        "./node_modules/@types/sequelize/index.d.ts"
-      ],
-      "./src/models/Debito.ts": [
-        "./node_modules/@types/sequelize/index.d.ts"
-      ],
       "./src/repository/BaseRepository.ts": [
         "./node_modules/@types/sequelize/index.d.ts"
       ],
@@ -1812,7 +1810,11 @@
         "./src/repository/BaseRepository.ts",
         "./src/models/Debito.ts"
       ],
+      "./src/services/eventEmitters.ts": [
+        "./node_modules/@types/node/events.d.ts"
+      ],
       "./src/resource/BaseResource.ts": [
+        "./node_modules/@types/node/events.d.ts",
         "./src/repository/BaseRepository.ts",
         "./node_modules/@types/sequelize/index.d.ts"
       ],
@@ -1823,15 +1825,9 @@
       "./node_modules/@types/jsonwebtoken/index.d.ts": [
         "./node_modules/@types/node/index.d.ts"
       ],
-      "./src/models/Usuario.ts": [
-        "./node_modules/@types/sequelize/index.d.ts"
-      ],
       "./src/repository/Usuario.ts": [
         "./src/repository/BaseRepository.ts",
         "./src/models/Usuario.ts"
-      ],
-      "./src/models/Consumidor.ts": [
-        "./node_modules/@types/sequelize/index.d.ts"
       ],
       "./src/repository/Consumidor.ts": [
         "./src/repository/BaseRepository.ts",
@@ -1840,9 +1836,6 @@
       "./src/resource/Consumidor.ts": [
         "./src/resource/BaseResource.ts",
         "./src/models/Consumidor.ts"
-      ],
-      "./src/models/Lojista.ts": [
-        "./node_modules/@types/sequelize/index.d.ts"
       ],
       "./src/repository/Lojista.ts": [
         "./src/repository/BaseRepository.ts",
@@ -1856,27 +1849,6 @@
         "./src/resource/BaseResource.ts",
         "./src/models/Usuario.ts"
       ],
-      "./node_modules/winston-transport/index.d.ts": [
-        "./node_modules/@types/node/stream.d.ts",
-        "./node_modules/logform/index.d.ts",
-        "./node_modules/@types/node/index.d.ts"
-      ],
-      "./node_modules/winston/lib/winston/config/index.d.ts": [
-        "./node_modules/@types/node/index.d.ts"
-      ],
-      "./node_modules/winston/lib/winston/transports/index.d.ts": [
-        "./node_modules/@types/node/http.d.ts",
-        "./node_modules/winston-transport/index.d.ts",
-        "./node_modules/@types/node/index.d.ts"
-      ],
-      "./node_modules/winston/index.d.ts": [
-        "./node_modules/@types/node/stream.d.ts",
-        "./node_modules/logform/index.d.ts",
-        "./node_modules/winston-transport/index.d.ts",
-        "./node_modules/winston/lib/winston/config/index.d.ts",
-        "./node_modules/winston/lib/winston/transports/index.d.ts",
-        "./node_modules/@types/node/index.d.ts"
-      ],
       "./src/utils/logger.ts": [
         "./node_modules/@types/express-serve-static-core/index.d.ts",
         "./node_modules/@types/express/index.d.ts",
@@ -1885,9 +1857,6 @@
       "./node_modules/@types/multer/index.d.ts": [
         "./node_modules/@types/express/index.d.ts",
         "./node_modules/@types/node/stream.d.ts"
-      ],
-      "./src/services/multer.ts": [
-        "./node_modules/@types/multer/index.d.ts"
       ],
       "./src/microservice/api/routes/admin.ts": [
         "./node_modules/@types/express-serve-static-core/index.d.ts"
@@ -1918,33 +1887,6 @@
       ],
       "./src/microservice/api/routes/index.ts": [
         "./node_modules/@types/express-serve-static-core/index.d.ts"
-      ],
-      "./src/models/Endereco.ts": [
-        "./node_modules/@types/sequelize/index.d.ts"
-      ],
-      "./src/models/Parceiro.ts": [
-        "./node_modules/@types/sequelize/index.d.ts"
-      ],
-      "./src/models/Acionistas.ts": [
-        "./node_modules/@types/sequelize/index.d.ts"
-      ],
-      "./src/models/DadosBancarios.ts": [
-        "./node_modules/@types/sequelize/index.d.ts"
-      ],
-      "./src/models/ReguaDivida.ts": [
-        "./node_modules/@types/sequelize/index.d.ts"
-      ],
-      "./src/models/ReguaDistribuicao.ts": [
-        "./node_modules/@types/sequelize/index.d.ts"
-      ],
-      "./src/models/index.ts": [
-        "./node_modules/@types/sequelize/index.d.ts",
-        "./src/models/Acionistas.ts"
-      ],
-      "./src/services/setupSequelize.ts": [
-        "./node_modules/@types/sequelize/index.d.ts",
-        "./src/models/Acionistas.ts",
-        "./node_modules/@types/bluebird/index.d.ts"
       ],
       "./src/repository/Endereco.ts": [
         "./src/repository/BaseRepository.ts",
@@ -2008,9 +1950,123 @@
         "./src/resource/ReguaDivida.ts",
         "./src/resource/ReguaDistribuicao.ts",
         "./src/resource/Debito.ts"
+      ],
+      "./node_modules/dotenv/types/index.d.ts": [
+        "./node_modules/@types/node/index.d.ts"
+      ],
+      "./src/services/sequelize.ts": [
+        "./node_modules/@types/sequelize/index.d.ts"
+      ],
+      "./src/services/setupSequelize.ts": [
+        "./node_modules/@types/sequelize/index.d.ts",
+        "./src/models/Acionistas.ts",
+        "./node_modules/@types/bluebird/index.d.ts"
+      ],
+      "./src/models/ReguaDistribuicao.ts": [
+        "./node_modules/@types/sequelize/index.d.ts"
+      ],
+      "./src/models/index.ts": [
+        "./node_modules/@types/sequelize/index.d.ts",
+        "./src/models/Acionistas.ts"
+      ],
+      "./src/models/ReguaDivida.ts": [
+        "./node_modules/@types/sequelize/index.d.ts"
+      ],
+      "./src/models/DadosBancarios.ts": [
+        "./node_modules/@types/sequelize/index.d.ts"
+      ],
+      "./src/models/Acionistas.ts": [
+        "./node_modules/@types/sequelize/index.d.ts"
+      ],
+      "./src/models/Parceiro.ts": [
+        "./node_modules/@types/sequelize/index.d.ts"
+      ],
+      "./src/models/Endereco.ts": [
+        "./node_modules/@types/sequelize/index.d.ts"
+      ],
+      "./src/models/Lojista.ts": [
+        "./node_modules/@types/sequelize/index.d.ts"
+      ],
+      "./src/models/Consumidor.ts": [
+        "./node_modules/@types/sequelize/index.d.ts"
+      ],
+      "./src/models/Usuario.ts": [
+        "./node_modules/@types/sequelize/index.d.ts"
+      ],
+      "./src/models/Debito.ts": [
+        "./node_modules/@types/sequelize/index.d.ts"
+      ],
+      "./node_modules/winston/index.d.ts": [
+        "./node_modules/@types/node/stream.d.ts",
+        "./node_modules/logform/index.d.ts",
+        "./node_modules/winston-transport/index.d.ts",
+        "./node_modules/winston/lib/winston/config/index.d.ts",
+        "./node_modules/winston/lib/winston/transports/index.d.ts",
+        "./node_modules/@types/node/index.d.ts"
+      ],
+      "./node_modules/winston-transport/index.d.ts": [
+        "./node_modules/@types/node/stream.d.ts",
+        "./node_modules/logform/index.d.ts",
+        "./node_modules/@types/node/index.d.ts"
+      ],
+      "./node_modules/winston/lib/winston/transports/index.d.ts": [
+        "./node_modules/@types/node/http.d.ts",
+        "./node_modules/winston-transport/index.d.ts",
+        "./node_modules/@types/node/index.d.ts"
+      ],
+      "./node_modules/winston/lib/winston/config/index.d.ts": [
+        "./node_modules/@types/node/index.d.ts"
+      ],
+      "./src/services/multer.ts": [
+        "./node_modules/@types/multer/index.d.ts"
       ]
     },
     "semanticDiagnosticsPerFile": [
+      "./node_modules/dotenv/types/index.d.ts",
+      "./src/server.ts",
+      "./src/config/database.js",
+      "./src/services/sequelize.ts",
+      "./src/services/setupSequelize.ts",
+      "./src/models/ReguaDistribuicao.ts",
+      "./src/resource/ReguaDistribuicao.ts",
+      "./src/repository/ReguaDistribuicao.ts",
+      "./src/models/index.ts",
+      "./src/models/ReguaDivida.ts",
+      "./src/resource/ReguaDivida.ts",
+      "./src/repository/ReguaDivida.ts",
+      "./src/models/DadosBancarios.ts",
+      "./src/resource/DadosBancarios.ts",
+      "./src/repository/DadosBancarios.ts",
+      "./src/models/Acionistas.ts",
+      "./src/resource/Acionistas.ts",
+      "./src/repository/Acionistas.ts",
+      "./src/models/Parceiro.ts",
+      "./src/resource/Parceiro.ts",
+      "./src/repository/Parceiro.ts",
+      "./src/models/Endereco.ts",
+      "./src/resource/Endereco.ts",
+      "./src/repository/Endereco.ts",
+      "./src/models/Lojista.ts",
+      "./src/resource/Lojista.ts",
+      "./src/repository/Lojista.ts",
+      "./src/models/Consumidor.ts",
+      "./src/resource/Consumidor.ts",
+      "./src/repository/Consumidor.ts",
+      "./src/models/Usuario.ts",
+      "./src/resource/Usuario.ts",
+      "./src/repository/Usuario.ts",
+      "./src/models/Debito.ts",
+      "./src/resource/Debito.ts",
+      "./src/repository/Debito.ts",
+      "./node_modules/logform/index.d.ts",
+      "./node_modules/winston/index.d.ts",
+      "./src/utils/logger.ts",
+      "./src/microservice/api/routes/index.ts",
+      "./src/microservice/api/routes/admin.ts",
+      "./node_modules/winston-transport/index.d.ts",
+      "./node_modules/winston/lib/winston/transports/index.d.ts",
+      "./node_modules/winston/lib/winston/config/index.d.ts",
+      "./src/services/multer.ts",
       "./node_modules/typescript/lib/lib.es5.d.ts",
       "./node_modules/typescript/lib/lib.es2015.d.ts",
       "./node_modules/typescript/lib/lib.es2016.d.ts",
@@ -2093,7 +2149,6 @@
       "./node_modules/@types/body-parser/index.d.ts",
       "./node_modules/@types/express/index.d.ts",
       "./src/routes.ts",
-      "./node_modules/dotenv/types/index.d.ts",
       "./node_modules/@types/morgan/index.d.ts",
       "./node_modules/@types/cors/index.d.ts",
       "./node_modules/@types/lodash/common/common.d.ts",
@@ -2113,32 +2168,12 @@
       "./node_modules/@types/continuation-local-storage/index.d.ts",
       "./node_modules/@types/validator/index.d.ts",
       "./node_modules/@types/sequelize/index.d.ts",
-      "./src/config/database.js",
-      "./src/services/sequelize.ts",
-      "./src/models/Debito.ts",
       "./src/repository/BaseRepository.ts",
-      "./src/repository/Debito.ts",
+      "./src/services/eventEmitters.ts",
       "./src/resource/BaseResource.ts",
-      "./src/resource/Debito.ts",
       "./node_modules/@types/jsonwebtoken/index.d.ts",
-      "./src/models/Usuario.ts",
-      "./src/repository/Usuario.ts",
-      "./src/models/Consumidor.ts",
-      "./src/repository/Consumidor.ts",
-      "./src/resource/Consumidor.ts",
-      "./src/models/Lojista.ts",
-      "./src/repository/Lojista.ts",
-      "./src/resource/Lojista.ts",
-      "./src/resource/Usuario.ts",
-      "./node_modules/logform/index.d.ts",
-      "./node_modules/winston-transport/index.d.ts",
-      "./node_modules/winston/lib/winston/config/index.d.ts",
-      "./node_modules/winston/lib/winston/transports/index.d.ts",
-      "./node_modules/winston/index.d.ts",
       "./node_modules/@types/multer/index.d.ts",
-      "./src/services/multer.ts",
       "./src/services/readingCsv.ts",
-      "./src/microservice/api/routes/admin.ts",
       "./src/resource/controller.ts",
       "./src/utils/routing.ts",
       "./src/microservice/api/routes/usuario.ts",
@@ -2146,16 +2181,6 @@
       "./src/microservice/api/routes/debito.ts",
       "./src/microservice/api/routes/lojista.ts",
       "./src/microservice/api/routes/consumidor.ts",
-      "./src/microservice/api/routes/index.ts",
-      "./src/models/Endereco.ts",
-      "./src/models/Parceiro.ts",
-      "./src/models/Acionistas.ts",
-      "./src/models/DadosBancarios.ts",
-      "./src/models/ReguaDivida.ts",
-      "./src/models/ReguaDistribuicao.ts",
-      "./src/models/index.ts",
-      "./src/services/setupSequelize.ts",
-      "./src/server.ts",
       "./src/database/migrations/20201128193409-table-usuario.js",
       "./src/database/migrations/20201129192909-table-consumidor.js",
       "./src/database/migrations/20201129193936-table-lojista.js",
@@ -2167,27 +2192,14 @@
       "./src/database/migrations/20201130140737-table-debito.js",
       "./src/database/migrations/20201130140737-table-endereco.js",
       "./src/database/seeders/20201207011805-usuarios.js",
-      "./src/repository/Endereco.ts",
-      "./src/resource/Endereco.ts",
       "./src/microservice/api/routes/endereco.ts",
-      "./src/repository/Acionistas.ts",
-      "./src/repository/DadosBancarios.ts",
-      "./src/repository/Parceiro.ts",
-      "./src/repository/ReguaDistribuicao.ts",
-      "./src/repository/ReguaDivida.ts",
-      "./src/resource/Acionistas.ts",
-      "./src/resource/DadosBancarios.ts",
-      "./src/resource/Parceiro.ts",
-      "./src/resource/ReguaDistribuicao.ts",
-      "./src/resource/ReguaDivida.ts",
       "./src/resource/index.ts",
       "./node_modules/@types/eslint-visitor-keys/index.d.ts",
       "./node_modules/@types/geojson/index.d.ts",
       "./node_modules/@types/json-schema/index.d.ts",
       "./node_modules/@types/parse-json/index.d.ts",
       "./node_modules/@types/strip-bom/index.d.ts",
-      "./node_modules/@types/strip-json-comments/index.d.ts",
-      "./src/utils/logger.ts"
+      "./node_modules/@types/strip-json-comments/index.d.ts"
     ]
   },
   "version": "3.7.5"

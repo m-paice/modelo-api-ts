@@ -1,6 +1,8 @@
 import { Options, FindOptions } from 'sequelize';
 import BaseSequelizeRepository from '../repository/BaseRepository';
 
+import eventEmitters from '../services/eventEmitters';
+
 export const CREATED = 'created';
 export const UPDATED = 'updated';
 export const DESTROYED = 'destroyed';
@@ -31,11 +33,11 @@ export default class BaseResource<TModel extends Instance> {
     this.destroy = this.destroy.bind(this);
     this.destroyById = this.destroyById.bind(this);
 
-    // this.getEmitter = this.getEmitter.bind(this)
-    // this.emit = this.emit.bind(this)
-    // this.emitCreated = this.emitCreated.bind(this)
-    // this.emitUpdated = this.emitUpdated.bind(this)
+    this.emit = this.emit.bind(this);
+    this.emitCreated = this.emitCreated.bind(this);
+    this.emitUpdated = this.emitUpdated.bind(this);
     // this.emitDestroyed = this.emitDestroyed.bind(this)
+
     // this.reload = this.reload.bind(this)
     // this.count = this.count.bind(this)
     // this.findManyPaginated = this.findManyPaginated.bind(this)
@@ -54,6 +56,24 @@ export default class BaseResource<TModel extends Instance> {
     return this.repository;
   }
 
+  emit(event: string, data: Instance | Instance[] | any) {
+    if ((Array.isArray(data) && !data.length) || !data) return null;
+
+    return eventEmitters.emit(event, data);
+  }
+
+  on(event, listener) {
+    return eventEmitters.on(event, listener);
+  }
+
+  emitCreated(data) {
+    return this.emit(CREATED, data);
+  }
+
+  emitUpdated(data) {
+    return this.emit(UPDATED, data);
+  }
+
   findMany(query: Options = {}) {
     return this.getRepository().findMany(query);
   }
@@ -69,13 +89,19 @@ export default class BaseResource<TModel extends Instance> {
   create(data: Partial<TModel>, options: Options = {}): Promise<TModel> {
     return this.getRepository()
       .create(data, options)
-      .then((model) => model);
+      .then((response) => {
+        this.emitCreated(response);
+        return response;
+      });
   }
 
   update(model: TModel, data: TModel, options: Options = {}) {
     return this.getRepository()
       .update(model, data, options)
-      .then((model) => model);
+      .then((response) => {
+        this.emitUpdated(response);
+        return response;
+      });
   }
 
   updateById(id: string, data: TModel, options: Options = {}) {
