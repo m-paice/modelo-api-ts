@@ -7,7 +7,7 @@ import lojistaResource from './Lojista';
 
 export class UsuarioResource extends BaseResource<UsuarioInstance> {
   constructor() {
-    super(usuarioRepository);
+    super(usuarioRepository, 'usuario');
   }
 
   async auth(data: { login: string; senha: string }) {

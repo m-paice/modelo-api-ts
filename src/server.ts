@@ -10,6 +10,7 @@ import setupSequelize from './services/setupSequelize';
 
 // microservices
 import Workers from './microservice/workers/App';
+import EventsEmitters from './microservice/emitters/App';
 
 dotenv.config();
 
@@ -53,8 +54,10 @@ class Server {
 
   microservices() {
     const workers = new Workers();
+    const eventEmitters = new EventsEmitters();
 
     workers.onStart();
+    eventEmitters.onStart();
   }
 }
 

@@ -14,10 +14,13 @@ export type Instance = {
 export default class BaseResource<TModel extends Instance> {
   protected readonly repository: BaseSequelizeRepository<TModel>;
 
+  protected readonly entity: string;
+
   protected events: string[];
 
-  constructor(repository: BaseSequelizeRepository<TModel>) {
+  constructor(repository: BaseSequelizeRepository<TModel>, entity = 'none') {
     this.repository = repository;
+    this.entity = entity;
     this.events = [CREATED, UPDATED, DESTROYED];
 
     this.getRepository = this.getRepository.bind(this);
@@ -67,11 +70,11 @@ export default class BaseResource<TModel extends Instance> {
   }
 
   emitCreated(data) {
-    return this.emit(CREATED, data);
+    return this.emit(`${this.entity}.${CREATED}`, data);
   }
 
   emitUpdated(data) {
-    return this.emit(UPDATED, data);
+    return this.emit(`${this.entity}.${UPDATED}`, data);
   }
 
   findMany(query: Options = {}) {
