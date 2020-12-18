@@ -5,7 +5,7 @@ import {
   CreateOptions,
   UpdateOptions,
   DestroyOptions,
-} from "sequelize";
+} from 'sequelize';
 
 class BaseRepository<T> {
   private readonly model: any;
@@ -15,6 +15,7 @@ class BaseRepository<T> {
   }
 
   findMany(options?: FindOptions<T>): Promise<T[]> {
+    console.log('repository findMany');
     return this.model.findAll(options);
   }
 

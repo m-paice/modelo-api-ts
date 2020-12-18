@@ -1,5 +1,5 @@
-import { Model } from "sequelize";
-import { Request, Response } from "express";
+import { Model } from 'sequelize';
+import { Request, Response } from 'express';
 
 export default <T>(resource: any) => {
   const index = async (req: Request, res: Response) => {
@@ -9,6 +9,8 @@ export default <T>(resource: any) => {
       const response = await resource
         .findMany(query)
         .then((data: Partial<T>) => data);
+
+      console.log('response: ', response);
 
       return res.json(response);
     } catch (error) {
