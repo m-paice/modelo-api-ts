@@ -10,9 +10,12 @@ import * as logger from '../../../utils/logger';
 import upload from '../../../services/multer';
 import readingCsv, { DataCsv } from '../../../services/readingCsv';
 
+// middleware for admin
+import authAdmin from '../../../middleware/authAdmin';
+
 const router = Router();
 
-router.post('/upload', upload.single('file'), async (req, res) => {
+router.post('/upload', authAdmin, upload.single('file'), async (req, res) => {
   const data = await readingCsv(req.file.path);
 
   const createUserIfNotExist = async (item: DataCsv) => {

@@ -8,8 +8,8 @@ export default class App {
   protected withAmqpResources = true;
 
   protected jobs: [string, Job][] = [
-    ['* 1 * * * *', new BoletoJob()],
-    ['* 1 * * * *', new PagamentoJob()],
+    ['* * * * 2 *', new BoletoJob()],
+    ['* * * * 2 *', new PagamentoJob()],
   ];
 
   protected runningJobs: Schedule.Job[];
