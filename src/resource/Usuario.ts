@@ -32,26 +32,40 @@ export class UsuarioResource extends BaseResource<UsuarioInstance> {
       throw 'password not found. password is required.';
     }
 
+    const isClient = await usuarioRepository.findOne({
+      where: {
+        login: data.cpf,
+        ativo: true,
+      },
+    });
+
+    if (isClient) throw 'user already exists';
+
     const user = await usuarioRepository.create(payload);
-    await consumidorResource.create({
+
+    const consumer = await consumidorResource.create({
       usuarioId: user.id,
       cpf: data.cpf,
     });
 
-    await this.auth({ login: user.login, senha: user.senha });
+    const token = await this.auth({ login: user.login, senha: user.senha });
+
+    return {
+      token,
+      user,
+      document: 'pf',
+    };
   }
 
   async criarLojista(data: {
     cnpj: string;
     senha: string;
-    nome: string;
-    nascimento: string;
-    email: string;
-    celular: string;
+    razaoSocial: string;
   }) {
     const payload = {
       ...data,
       login: data.cnpj,
+      nome: data.razaoSocial,
       ativo: true,
     };
 
@@ -59,13 +73,29 @@ export class UsuarioResource extends BaseResource<UsuarioInstance> {
       throw 'password not found. password is required.';
     }
 
+    const isClient = await usuarioRepository.findOne({
+      where: {
+        login: data.cnpj,
+        ativo: true,
+      },
+    });
+
+    if (isClient) throw 'user already exists';
+
     const user = await usuarioRepository.create(payload);
-    await lojistaResource.create({
+
+    const shookeeper = await lojistaResource.create({
       usuarioId: user.id,
       ...data,
     });
 
-    await this.auth({ login: user.login, senha: user.senha });
+    const token = await this.auth({ login: user.login, senha: user.senha });
+
+    return {
+      token,
+      user,
+      document: 'pj',
+    };
   }
 }
 
