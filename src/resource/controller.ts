@@ -10,8 +10,6 @@ export default <T>(resource: any) => {
         .findMany(query)
         .then((data: Partial<T>) => data);
 
-      console.log('response: ', response);
-
       return res.json(response);
     } catch (error) {
       return res.status(500).json(error);

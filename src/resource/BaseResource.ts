@@ -78,7 +78,6 @@ export default class BaseResource<TModel extends Instance> {
   }
 
   findMany(query: Options = {}) {
-    console.log('resource findMany');
     return this.getRepository().findMany(query);
   }
 
