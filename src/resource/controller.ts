@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 
 export default <T>(resource: any) => {
   const index = async (req: Request, res: Response) => {
-    const query = {};
+    const query = req.query;
 
     try {
       const response = await resource
@@ -18,7 +18,7 @@ export default <T>(resource: any) => {
 
   const show = async (req: Request, res: Response) => {
     const { id } = req.params;
-    const query = {};
+    const query = req.query;
 
     try {
       const response = await resource

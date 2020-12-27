@@ -12,6 +12,17 @@ export interface DataCsv {
   CONTRATO: string;
   VALOR: string;
   VENCIMENTO: string;
+  FONE1?: string;
+  FONE2?: string;
+  EMAIL?: string;
+
+  CEP?: string;
+  ENDERECO?: string;
+  NUMERO?: string;
+  COMPLEMENTO?: string;
+  BAIRRO?: string;
+  CIDADE?: string;
+  ESTADO?: string;
 }
 
 const readingFile = (file: string): Promise<DataCsv[]> => {
@@ -19,7 +30,7 @@ const readingFile = (file: string): Promise<DataCsv[]> => {
 
   return new Promise((resolve, reject) => {
     fs.createReadStream(file)
-      .pipe(csv({ separator: ';' }))
+      .pipe(csv({ separator: ',' }))
       .on('data', (row: any) => {
         result.push(row);
       })

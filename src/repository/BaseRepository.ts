@@ -30,11 +30,11 @@ class BaseRepository<T> {
     return this.model.create(data, options);
   }
 
-  update(model: any, data: T, options: Options): Promise<T> {
+  update(model: any, data: Partial<T>, options: Options): Promise<T> {
     return model.update(data, options);
   }
 
-  updateById(id: string, data: T, options: Options): Promise<T> {
+  updateById(id: string, data: Partial<T>, options?: Options): Promise<T> {
     return this.findById(id, options).then((model) =>
       this.update(model, data, options)
     );

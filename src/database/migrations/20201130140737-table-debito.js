@@ -8,10 +8,20 @@ module.exports = {
         allowNull: false,
       },
       consumidorId: {
-        type: Sequelize.STRING,
+        type: Sequelize.UUID,
+        allowNull: false,
+        references: {
+          model: 'consumidor',
+          key: 'id',
+        },
       },
       lojistaId: {
-        type: Sequelize.STRING,
+        type: Sequelize.UUID,
+        allowNull: false,
+        references: {
+          model: 'lojista',
+          key: 'id',
+        },
       },
       seqdiv: {
         type: Sequelize.STRING,

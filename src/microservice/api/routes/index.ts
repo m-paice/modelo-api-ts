@@ -1,5 +1,6 @@
 import { Router } from 'express';
 
+import authRoutes from './auth';
 import adminRoutes from './admin';
 import usuarioRoutes from './usuario';
 import parceiroRoutes from './parceiro';
@@ -17,6 +18,8 @@ routes.use(loggers.default.requestLogger);
 
 // TODO: definir um middleware de autenticação para está rota.
 routes.use('/admin', adminRoutes);
+
+routes.use('/auth', authRoutes);
 
 routes.use('/usuario', usuarioRoutes);
 routes.use('/lojista', lojistaRoutes);

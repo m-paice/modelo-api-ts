@@ -77,11 +77,11 @@ export default class BaseResource<TModel extends Instance> {
     return this.emit(`${this.entity}.${UPDATED}`, data);
   }
 
-  findMany(query: Options = {}) {
+  findMany(query: FindOptions<TModel>) {
     return this.getRepository().findMany(query);
   }
 
-  findById(id: string, query: Options = {}): Promise<TModel> {
+  findById(id: string, query: FindOptions<TModel>): Promise<TModel> {
     return this.getRepository().findById(id, query);
   }
 

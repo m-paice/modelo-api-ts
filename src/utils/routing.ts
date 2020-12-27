@@ -1,14 +1,18 @@
-import { Router, Request, Response, NextFunction } from "express";
-import { ServerResponse } from "http";
+import { Router, Request, Response, NextFunction } from 'express';
+import { ServerResponse } from 'http';
+
+interface IRequest extends Request {
+  user: any;
+}
 
 type HandlerFunction = (
-  req: Request,
+  req: IRequest,
   res: Response,
   next?: NextFunction
 ) => Promise<any> | ServerResponse | any;
 
 export const promiseHandler = (fn: HandlerFunction) => (
-  req: Request,
+  req: IRequest,
   res: Response,
   next: NextFunction
 ) => {
@@ -38,7 +42,7 @@ export const promiseHandler = (fn: HandlerFunction) => (
   }
 
   console.warn(
-    "Something else then Promise or ServerResponse returned from controller method.",
+    'Something else then Promise or ServerResponse returned from controller method.',
     resultOrPromise
   );
   res.send(resultOrPromise);

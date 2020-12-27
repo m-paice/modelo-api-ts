@@ -30,13 +30,17 @@ const Consumidor = sequelize.define(
   },
   {
     tableName: 'consumidor',
-  },
+  }
 );
 
 Consumidor.associate = (models) => {
   Consumidor.belongsTo(models.Usuario, {
     foreignKey: 'usuarioId',
     as: 'usuario',
+  });
+  Consumidor.hasMany(models.Debito, {
+    foreignKey: 'id',
+    as: 'debitos',
   });
 };
 

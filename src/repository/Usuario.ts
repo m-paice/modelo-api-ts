@@ -3,6 +3,8 @@ import jwt from 'jsonwebtoken';
 import Usuario, { UsuarioInstance } from '../models/Usuario';
 import BaseRepository from './BaseRepository';
 
+import validators from '../utils/validators';
+
 class UsuarioRepository extends BaseRepository<UsuarioInstance> {
   private verifyToken = process.env.VERIFY_TOKEN || '';
 
@@ -10,7 +12,11 @@ class UsuarioRepository extends BaseRepository<UsuarioInstance> {
     super(Usuario);
   }
 
-  async auth(data: { login: string; senha: string }) {
+  async generateToken(user) {
+    return jwt.sign({ ...user }, this.verifyToken);
+  }
+
+  async decodedToken(data: { login: string; senha: string }) {
     const user: any = await Usuario.findOne({
       where: {
         login: data.login,
@@ -22,9 +28,15 @@ class UsuarioRepository extends BaseRepository<UsuarioInstance> {
       throw 'user not found';
     }
 
-    const token = jwt.sign({ id: user.id }, this.verifyToken);
+    const token = jwt.sign({ user }, this.verifyToken);
 
-    return token;
+    const document = validators.document(data.login);
+
+    return {
+      token,
+      user,
+      document,
+    };
   }
 }
 

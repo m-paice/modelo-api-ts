@@ -4,7 +4,7 @@
     "declaration": true,
     "removeComments": true,
     "allowJs": true,
-    "target": "es2017",
+    "target": "es5",
     "sourceMap": true,
     "outDir": "./build",
     "baseUrl": "./",

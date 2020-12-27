@@ -2,15 +2,19 @@ import { Router } from 'express';
 
 import debitoResource from '../../../resource/Debito';
 import usuarioResource from '../../../resource/Usuario';
+import enderecoResource from '../../../resource/Endereco';
 import consumidorResource from '../../../resource/Consumidor';
 import lojistaResource from '../../../resource/Lojista';
 
 import * as logger from '../../../utils/logger';
 
+// utils
+import generateDate from '../../../utils/generateDate';
+
 import upload from '../../../services/multer';
 import readingCsv, { DataCsv } from '../../../services/readingCsv';
 
-// middleware for admin
+// middleware of the admin
 import authAdmin from '../../../middleware/authAdmin';
 
 const router = Router();
@@ -19,7 +23,7 @@ router.post('/upload', authAdmin, upload.single('file'), async (req, res) => {
   const data = await readingCsv(req.file.path);
 
   const createUserIfNotExist = async (item: DataCsv) => {
-    const { DOCUMENTO, NOME } = item;
+    const { DOCUMENTO, NOME, FONE1, FONE2, EMAIL } = item;
 
     const user = await usuarioResource.findOne({
       where: {
@@ -28,9 +32,12 @@ router.post('/upload', authAdmin, upload.single('file'), async (req, res) => {
     });
 
     if (!user) {
+      // TODO: don't emit CREATED event
       const response = await usuarioResource.create({
         login: DOCUMENTO,
         nome: NOME,
+        celular: FONE1 || FONE2,
+        email: EMAIL,
         ativo: false,
       });
 
@@ -42,6 +49,27 @@ router.post('/upload', authAdmin, upload.single('file'), async (req, res) => {
 
     logger.default.debugLogger(`usuario.FOUND = #${user.id} - ${user.nome}`);
     return user;
+  };
+
+  const createAddress = async (item: DataCsv, userId: string) => {
+    const { CEP, ENDERECO, NUMERO, COMPLEMENTO, BAIRRO, CIDADE, ESTADO } = item;
+
+    if (!CEP) return;
+
+    const response = await enderecoResource.create({
+      cep: CEP,
+      rua: ENDERECO,
+      numero: NUMERO,
+      complemento: COMPLEMENTO,
+      bairro: BAIRRO,
+      cidade: CIDADE,
+      uf: ESTADO,
+      usuarioId: userId,
+    });
+
+    if (response) {
+      logger.default.debugLogger(`endereco.CREATED = #${response.id}`);
+    }
   };
 
   const createConsumerIfNotExist = async (item: DataCsv, usuarioId: string) => {
@@ -119,19 +147,17 @@ router.post('/upload', authAdmin, upload.single('file'), async (req, res) => {
         consumidorId,
         lojistaId,
         seqdiv: item.SEQDIV,
-        inclusao: item.INCLUSAO,
+        inclusao: generateDate(item.INCLUSAO),
         status: item.STATUS,
         tipoDoc: item.TIPODOC,
         contrato: item.CONTRATO,
         valor: item.VALOR,
-        vencimento: item.VENCIMENTO,
+        vencimento: generateDate(item.VENCIMENTO),
       });
 
       logger.default.debugLogger(
         `debito.CREATED = #${response.id} - ${response.seqdiv}`
       );
-
-      return response;
     }
 
     logger.default.debugLogger(`debito.FOUND = #${debit.id} - ${debit.seqdiv}`);
@@ -142,14 +168,20 @@ router.post('/upload', authAdmin, upload.single('file'), async (req, res) => {
     // buscar ou criar usuário
     const user = await createUserIfNotExist(item);
 
+    // verificar e criar endereco
+    await createAddress(item, user.id);
+
     // buscar ou criar consumidor
     const consumer = await createConsumerIfNotExist(item, user.id);
 
     // buscar ou criar lojista
     const shookeeper = await createShopkeeperIfNotExist(item, user.id);
 
+    // verificar e criar dados bancarios
+    // verificar dados do lojista (email, telefone, endereço) [PLANILHA PABLO]
+
     // criar debito
-    createDebitIfNotExist(item, consumer.id, shookeeper.id);
+    await createDebitIfNotExist(item, consumer.id, shookeeper.id);
   });
 
   return res.json({ message: 'ok' });

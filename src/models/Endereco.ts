@@ -4,6 +4,7 @@ import sequelize from '../services/sequelize';
 
 export type EnderecoInstance = {
   id: string;
+  usuarioId: string;
   cep: string;
   rua: string;
   numero: string;
@@ -33,7 +34,7 @@ const Endereco = sequelize.define(
   },
   {
     tableName: 'endereco',
-  },
+  }
 );
 
 Endereco.associate = (models) => {

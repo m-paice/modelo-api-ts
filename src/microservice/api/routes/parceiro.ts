@@ -15,7 +15,6 @@ const controllerUsuario = {
     const user = await usuarioResource.create({
       ...req.body,
       login: req.body.documento,
-      senha: Math.random(),
     });
 
     return parceiroResource.create({ ...req.body, usuarioId: user.id });
