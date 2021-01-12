@@ -1,9 +1,14 @@
-import { Model } from 'sequelize';
 import { Request, Response } from 'express';
+
+interface IRequest extends Request {
+  user: any;
+  consumidorId: string;
+  lojistaId: string
+}
 
 export default <T>(resource: any) => {
   const index = async (req: Request, res: Response) => {
-    const query = req.query;
+    const { query } = req;
 
     try {
       const response = await resource
@@ -18,7 +23,7 @@ export default <T>(resource: any) => {
 
   const show = async (req: Request, res: Response) => {
     const { id } = req.params;
-    const query = req.query;
+    const { query } = req;
 
     try {
       const response = await resource
@@ -31,13 +36,14 @@ export default <T>(resource: any) => {
     }
   };
 
-  const create = async (req: Request, res: Response) => {
-    const data = req.body;
-    const query = {};
+  const create = async (req: IRequest, res: Response) => {
+    const {
+      body, query, consumidorId, lojistaId,
+    } = req;
 
     try {
       const response = await resource
-        .create(data, query)
+        .create({ consumidorId, lojistaId, ...body }, query)
         .then((data: Partial<T>) => data);
 
       return res.json(response);
@@ -48,12 +54,11 @@ export default <T>(resource: any) => {
 
   const update = async (req: Request, res: Response) => {
     const { id } = req.params;
-    const data = req.body;
-    const query = {};
+    const { body, query } = req;
 
     try {
       const response = await resource
-        .updateById(id, data, query)
+        .updateById(id, body, query)
         .then((data: Partial<T>) => data);
 
       return res.json(response);

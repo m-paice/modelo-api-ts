@@ -36,8 +36,8 @@ const ReguaDistribuicao = sequelize.define(
     },
   },
   {
-    tableName: 'reguadistribuicao',
-  },
+    tableName: 'regua_distribuicao',
+  }
 );
 
 ReguaDistribuicao.associate = (models) => {

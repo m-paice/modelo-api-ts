@@ -11,7 +11,7 @@ export type DebitoInstance = {
   status: string;
   tipoDoc: string;
   contrato: string;
-  valor: string;
+  valor: number;
   vencimento: string;
   createdAt?: Date;
   updatedAt?: Date;
@@ -30,7 +30,7 @@ const Debito = sequelize.define(
     status: Sequelize.STRING,
     tipoDoc: Sequelize.STRING,
     contrato: Sequelize.STRING,
-    valor: Sequelize.STRING,
+    valor: Sequelize.DECIMAL,
     vencimento: Sequelize.STRING,
     createdAt: {
       type: Sequelize.DATE,
@@ -54,6 +54,10 @@ Debito.associate = (models) => {
   Debito.belongsTo(models.Lojista, {
     foreignKey: 'lojistaId',
     as: 'lojista',
+  });
+  Debito.hasOne(models.Negociacao, {
+    foreignKey: 'debitoId',
+    as: 'negociacao',
   });
 };
 

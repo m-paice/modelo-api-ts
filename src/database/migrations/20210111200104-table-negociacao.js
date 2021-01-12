@@ -1,6 +1,6 @@
 module.exports = {
   up: (queryInterface, Sequelize) =>
-    queryInterface.createTable('debito', {
+    queryInterface.createTable('negociacao', {
       id: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
@@ -23,13 +23,24 @@ module.exports = {
           key: 'id',
         },
       },
-      seqdiv: Sequelize.STRING,
-      inclusao: Sequelize.STRING,
-      status: Sequelize.STRING,
-      tipoDoc: Sequelize.STRING,
-      contrato: Sequelize.STRING,
-      valor: Sequelize.DECIMAL,
-      vencimento: Sequelize.STRING,
+      debitoId: {
+        type: Sequelize.UUID,
+        allowNull: false,
+        references: {
+          model: 'debito',
+          key: 'id',
+        },
+      },
+      dataRegistro: Sequelize.DATE,
+      divida: Sequelize.DECIMAL,
+      desconto: Sequelize.DECIMAL,
+      negociado: Sequelize.DECIMAL,
+      recebido: Sequelize.DECIMAL,
+      atrasado: Sequelize.DECIMAL,
+      situacao: Sequelize.STRING,
+      formaPagamento: Sequelize.STRING,
+      parcelamento: Sequelize.INTEGER,
+      dataVencimento: Sequelize.DATE,
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false,
@@ -40,5 +51,5 @@ module.exports = {
       },
     }),
 
-  down: (queryInterface, Sequelize) => queryInterface.dropTable('debito'),
+  down: (queryInterface, Sequelize) => queryInterface.dropTable('negociacao'),
 };

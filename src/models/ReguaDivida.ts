@@ -36,8 +36,8 @@ const ReguaDivida = sequelize.define(
     },
   },
   {
-    tableName: 'reguadivida',
-  },
+    tableName: 'regua_divida',
+  }
 );
 
 ReguaDivida.associate = (models) => {

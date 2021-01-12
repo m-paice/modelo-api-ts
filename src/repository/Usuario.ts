@@ -3,6 +3,9 @@ import jwt from 'jsonwebtoken';
 import Usuario, { UsuarioInstance } from '../models/Usuario';
 import BaseRepository from './BaseRepository';
 
+import consumidorResource from '../resource/Consumidor';
+import lojistaResource from '../resource/Lojista';
+
 import validators from '../utils/validators';
 
 class UsuarioRepository extends BaseRepository<UsuarioInstance> {
@@ -25,12 +28,32 @@ class UsuarioRepository extends BaseRepository<UsuarioInstance> {
     });
 
     if (!user) {
-      throw 'user not found';
+      throw new Error('user not found');
     }
 
-    const token = jwt.sign({ user }, this.verifyToken);
-
     const document = validators.document(data.login);
+
+    let token = '';
+
+    if (document === 'pf') {
+      const consumer = await consumidorResource.findOne({
+        where: {
+          usuarioId: user.id,
+        },
+      });
+
+      token = jwt.sign({ user, consumidorId: consumer.id }, this.verifyToken);
+    }
+
+    if (document === 'pj') {
+      const shopkeeper = await lojistaResource.findOne({
+        where: {
+          usuarioId: user.id,
+        },
+      });
+
+      token = jwt.sign({ user, lojistaId: shopkeeper.id }, this.verifyToken);
+    }
 
     return {
       token,

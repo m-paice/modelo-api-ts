@@ -8,6 +8,9 @@ import DadosBancarios from './DadosBancarios';
 import ReguaDivida from './ReguaDivida';
 import ReguaDistribuicao from './ReguaDistribuicao';
 import Debito from './Debito';
+import ReguaNegociacao from './ReguaNegociacao';
+import Negociacao from './Negociacao';
+import ParcelaNegociacao from './ParcelaNegociacao';
 
 export default {
   Usuario,
@@ -20,4 +23,7 @@ export default {
   ReguaDivida,
   ReguaDistribuicao,
   Debito,
+  ReguaNegociacao,
+  Negociacao,
+  ParcelaNegociacao,
 };

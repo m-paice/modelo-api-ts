@@ -7,6 +7,8 @@ import parceiroRoutes from './parceiro';
 import debitoRoutes from './debito';
 import lojistaRoutes from './lojista';
 import consumidorRoutes from './consumidor';
+import reguaNegociacaoRoutes from './reguaNegociacao';
+import negociacaoRoutes from './negociacao';
 
 import * as loggers from '../../../utils/logger';
 
@@ -26,5 +28,7 @@ routes.use('/lojista', lojistaRoutes);
 routes.use('/consumidor', consumidorRoutes);
 routes.use('/parceiro', parceiroRoutes);
 routes.use('/debito', debitoRoutes);
+routes.use('/regua-negociacao', reguaNegociacaoRoutes);
+routes.use('/negociacao', negociacaoRoutes);
 
 export default routes;

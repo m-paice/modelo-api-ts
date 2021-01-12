@@ -1,6 +1,6 @@
 module.exports = {
   up: (queryInterface, Sequelize) =>
-    queryInterface.createTable("reguadivida", {
+    queryInterface.createTable('regua_distribuicao', {
       id: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
@@ -11,28 +11,28 @@ module.exports = {
         type: Sequelize.UUID,
         allowNull: false,
         references: {
-          model: "lojista",
-          key: "id",
+          model: 'lojista',
+          key: 'id',
         },
       },
-      nome: {
+      tipo: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      dataInicio: {
-        type: Sequelize.DATE,
+      regra: {
+        type: Sequelize.STRING,
         allowNull: false,
       },
-      dataFim: {
-        type: Sequelize.DATE,
+      percentual: {
+        type: Sequelize.DECIMAL,
         allowNull: false,
       },
-      ativo: {
-        type: Sequelize.BOOLEAN,
+      fixa: {
+        type: Sequelize.STRING,
         allowNull: false,
       },
-      prioridade: {
-        type: Sequelize.INTEGER,
+      transacao: {
+        type: Sequelize.JSONB,
         allowNull: false,
       },
       createdAt: {
@@ -45,5 +45,6 @@ module.exports = {
       },
     }),
 
-  down: (queryInterface, Sequelize) => queryInterface.dropTable("reguadivida"),
+  down: (queryInterface, Sequelize) =>
+    queryInterface.dropTable('regua_distribuicao'),
 };
