@@ -74,8 +74,9 @@ export class UsuarioResource extends BaseResource<UsuarioInstance> {
       },
     });
 
-    if (isClientInative)
+    if (isClientInative) {
       return this.recreateClientInative(isClientInative.id, payload);
+    }
 
     const user = await usuarioRepository.create(payload);
 
@@ -136,7 +137,16 @@ export class UsuarioResource extends BaseResource<UsuarioInstance> {
         payload
       );
 
-      const token = await this.auth(user);
+      const shoopeerk = await lojistaResource.findOne({
+        where: {
+          usuarioId: user.id,
+        },
+      });
+
+      const token = await this.auth({
+        user: user.id,
+        lojistaId: shoopeerk.id,
+      });
 
       return {
         token,

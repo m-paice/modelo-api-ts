@@ -1,16 +1,15 @@
 import { Router } from 'express';
+import { uniq } from 'lodash';
 
 import debitoResource from '../../../resource/Debito';
 import usuarioResource from '../../../resource/Usuario';
-import enderecoResource from '../../../resource/Endereco';
 import consumidorResource from '../../../resource/Consumidor';
 import lojistaResource from '../../../resource/Lojista';
 import reguaNegociacaoResource from '../../../resource/ReguaNegociacao';
 
-import * as logger from '../../../utils/logger';
-
 // utils
 import generateDate from '../../../utils/generateDate';
+import queuedAsyncMap from '../../../utils/queuedAsyncMap';
 
 import upload from '../../../services/multer';
 import readingCsv from '../../../services/readingCsv';
@@ -41,14 +40,14 @@ router.post(
       }))
       .forEach(async (item) => {
         await reguaNegociacaoResource.create({
-          idadeDivida: item.IDADE_DIVIDA,
-          desconto: item.DESCONTO,
-          maximoParcela: item.MAXIMO_PARCELAS,
-          atenuador: item.ATENUADOR,
-          multa: item.MULTA,
-          juros: item.JUROS,
-          assessoria: item.ASSESSORIA,
-          reajuste: item.REAJUSTE,
+          idadeDivida: Number(item.IDADE_DIVIDA),
+          desconto: Number(item.DESCONTO),
+          maximoParcela: Number(item.MAXIMO_PARCELAS),
+          atenuador: Number(item.ATENUADOR),
+          multa: Number(item.MULTA),
+          juros: Number(item.JUROS),
+          assessoria: Number(item.ASSESSORIA),
+          reajuste: Number(item.REAJUSTE),
         });
       });
 
@@ -63,180 +62,89 @@ router.post(
   async (req, res) => {
     const data = await readingCsv(req.file.path);
 
-    const createUserIfNotExist = async (item: DebitsData) => {
-      const { DOCUMENTO, NOME, FONE1, FONE2, EMAIL } = item;
+    const usersConsumers = uniq(data.map((i: DebitsData) => i.DOCUMENTO));
+    const usersShookeepers = uniq(data.map((i: DebitsData) => i.CNPJ));
 
-      const user = await usuarioResource.findOne({
-        where: {
-          login: DOCUMENTO,
-        },
+    const createUserConsumer = async (login: string) => {
+      // TODO: don't emit CREATED event
+      const response = await usuarioResource.create({
+        login,
+        ativo: false,
       });
 
-      if (!user) {
-        // TODO: don't emit CREATED event
-        const response = await usuarioResource.create({
-          login: DOCUMENTO,
-          nome: NOME,
-          celular: FONE1 || FONE2,
-          email: EMAIL,
-          ativo: false,
-        });
-
-        logger.default.debugLogger(
-          `usuario.CREATED = #${response.id} - ${response.nome}`
-        );
-        return response;
-      }
-
-      logger.default.debugLogger(`usuario.FOUND = #${user.id} - ${user.nome}`);
-      return user;
+      return response;
     };
 
-    const createAddress = async (item: DebitsData, userId: string) => {
-      const {
-        CEP,
-        ENDERECO,
-        NUMERO,
-        COMPLEMENTO,
-        BAIRRO,
-        CIDADE,
-        ESTADO,
-      } = item;
-
-      if (!CEP) return;
-
-      const response = await enderecoResource.create({
-        cep: CEP,
-        rua: ENDERECO,
-        numero: NUMERO,
-        complemento: COMPLEMENTO,
-        bairro: BAIRRO,
-        cidade: CIDADE,
-        uf: ESTADO,
-        usuarioId: userId,
+    const createUserShookeeper = async (login: string) => {
+      // TODO: don't emit CREATED event
+      const response = await usuarioResource.create({
+        login,
+        ativo: false,
       });
 
-      if (response) {
-        logger.default.debugLogger(`endereco.CREATED = #${response.id}`);
-      }
+      return response;
     };
 
-    const createConsumerIfNotExist = async (
-      item: DebitsData,
-      usuarioId: string
-    ) => {
-      const { DOCUMENTO } = item;
+    const createConsumer = async (cpf: string, usuarioId: string) => {
+      const response = await consumidorResource.create({
+        usuarioId,
+        cpf,
+      });
 
+      return response;
+    };
+
+    const createShopkeeper = async (cnpj: string, usuarioId: string) => {
+      const response = await lojistaResource.create({
+        usuarioId,
+        cnpj,
+      });
+
+      return response;
+    };
+
+    const createDebit = async (item: DebitsData) => {
+      // find consumer
       const consumer = await consumidorResource.findOne({
         where: {
-          cpf: DOCUMENTO,
+          cpf: item.DOCUMENTO,
         },
       });
 
-      if (!consumer) {
-        const response = await consumidorResource.create({
-          usuarioId,
-          cpf: DOCUMENTO,
-        });
-
-        logger.default.debugLogger(
-          `consumidor.CREATED = #${response.id} - ${response.cpf}`
-        );
-
-        return response;
-      }
-
-      logger.default.debugLogger(
-        `consumidor.FOUND = #${consumer.id} - ${consumer.cpf}`
-      );
-      return consumer;
-    };
-
-    const createShopkeeperIfNotExist = async (
-      item: DebitsData,
-      usuarioId: string
-    ) => {
-      const { ASSOCIADO } = item;
-
-      const shopkeeper = await lojistaResource.findOne({
+      // find shoopeerk
+      const shoopeerk = await lojistaResource.findOne({
         where: {
-          razaoSocial: ASSOCIADO,
+          cnpj: item.CNPJ,
         },
       });
 
-      if (!shopkeeper) {
-        const response = await lojistaResource.create({
-          usuarioId,
-          razaoSocial: ASSOCIADO,
-        });
-
-        logger.default.debugLogger(
-          `lojista.CREATED = #${response.id} - ${response.cnpj}`
-        );
-
-        return response;
-      }
-
-      logger.default.debugLogger(
-        `lojista.FOUND = #${shopkeeper.id} - ${shopkeeper.cnpj}`
-      );
-      return shopkeeper;
-    };
-
-    const createDebitIfNotExist = async (
-      item: DebitsData,
-      consumidorId: string,
-      lojistaId: string
-    ) => {
-      const debit = await debitoResource.findOne({
-        where: {
-          seqdiv: item.SEQDIV,
-        },
+      // create debit
+      return debitoResource.create({
+        consumidorId: consumer.id,
+        lojistaId: shoopeerk.id,
+        seqdiv: item.SEQDIV,
+        inclusao: generateDate(item.INCLUSAO),
+        status: item.STATUS,
+        tipoDoc: item.TIPODOC,
+        contrato: item.CONTRATO,
+        valor: Number(item.VALOR.replace('.', '').replace(',', '.')),
+        vencimento: generateDate(item.VENCIMENTO),
       });
-
-      if (!debit) {
-        const response = await debitoResource.create({
-          consumidorId,
-          lojistaId,
-          seqdiv: item.SEQDIV,
-          inclusao: generateDate(item.INCLUSAO),
-          status: item.STATUS,
-          tipoDoc: item.TIPODOC,
-          contrato: item.CONTRATO,
-          valor: Number(item.VALOR.replace('.', '').replace(',', '.')),
-          vencimento: generateDate(item.VENCIMENTO),
-        });
-
-        return logger.default.debugLogger(
-          `debito.CREATED = #${response.id} - ${response.seqdiv}`
-        );
-      }
-
-      logger.default.debugLogger(
-        `debito.FOUND = #${debit.id} - ${debit.seqdiv}`
-      );
-      return debit;
     };
 
-    data.forEach(async (item) => {
-      // buscar ou criar usuário
-      const user = await createUserIfNotExist(item);
+    await queuedAsyncMap(usersConsumers, async (document: string) => {
+      const user = await createUserConsumer(document);
 
-      // verificar e criar endereco
-      await createAddress(item, user.id);
-
-      // buscar ou criar consumidor
-      const consumer = await createConsumerIfNotExist(item, user.id);
-
-      // buscar ou criar lojista
-      const shookeeper = await createShopkeeperIfNotExist(item, user.id);
-
-      // verificar e criar dados bancarios
-      // verificar dados do lojista (email, telefone, endereço) [PLANILHA PABLO]
-
-      // criar debito
-      await createDebitIfNotExist(item, consumer.id, shookeeper.id);
+      return createConsumer(document, user.id);
     });
+
+    await queuedAsyncMap(usersShookeepers, async (document: string) => {
+      const user = await createUserShookeeper(document);
+
+      return createShopkeeper(document, user.id);
+    });
+
+    await queuedAsyncMap(data, (item: DebitsData) => createDebit(item));
 
     return res.json({ message: 'ok' });
   }

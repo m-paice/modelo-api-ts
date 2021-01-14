@@ -66,6 +66,10 @@ Negociacao.associate = (models) => {
     foreignKey: 'debitoId',
     as: 'debito',
   });
+  Negociacao.hasMany(models.ParcelaNegociacao, {
+    foreignKey: 'negociacaoId',
+    as: 'parcelas',
+  });
 };
 
 export default Negociacao;

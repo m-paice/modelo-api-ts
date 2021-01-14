@@ -41,6 +41,11 @@ const ParcelaNegociacao = sequelize.define(
   }
 );
 
-ParcelaNegociacao.associate = (models) => {};
+ParcelaNegociacao.associate = (models) => {
+  ParcelaNegociacao.belongsTo(models.Negociacao, {
+    foreignKey: 'negociacaoId',
+    as: 'negociacao',
+  });
+};
 
 export default ParcelaNegociacao;

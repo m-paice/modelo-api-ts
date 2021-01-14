@@ -92,10 +92,11 @@ export default class BaseResource<TModel extends Instance> {
   create(data: Partial<TModel>, options: Options = {}): Promise<TModel> {
     return this.getRepository()
       .create(data, options)
-      .then((response) => {
-        this.emitCreated(response);
-        return response;
-      });
+      .then(
+        (response) =>
+          // this.emitCreated(response);
+          response
+      );
   }
 
   update(model: TModel, data: TModel, options: Options = {}) {

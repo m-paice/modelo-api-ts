@@ -15,10 +15,7 @@ module.exports = {
           key: 'id',
         },
       },
-      razaoSocial: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
+      razaoSocial: Sequelize.STRING,
       fantasia: Sequelize.STRING,
       cnpj: Sequelize.STRING,
       inscricaoMunicipal: Sequelize.STRING,

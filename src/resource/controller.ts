@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 interface IRequest extends Request {
   user: any;
   consumidorId: string;
-  lojistaId: string
+  lojistaId: string;
 }
 
 export default <T>(resource: any) => {
@@ -37,9 +37,7 @@ export default <T>(resource: any) => {
   };
 
   const create = async (req: IRequest, res: Response) => {
-    const {
-      body, query, consumidorId, lojistaId,
-    } = req;
+    const { body, query, consumidorId, lojistaId } = req;
 
     try {
       const response = await resource
