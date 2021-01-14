@@ -18,6 +18,11 @@ import { DebitsData, RuleData } from '../../../utils/interfaces/readingCsv';
 // middleware of the admin
 import authAdmin from '../../../middleware/authAdmin';
 
+interface User {
+  cpf: string;
+  nome: string;
+}
+
 const router = Router();
 
 router.post(
@@ -109,17 +114,12 @@ router.post(
       return response;
     };
 
-    const createConsumer = async (data: {
-      usuarioId: string;
-      cpf: string;
-      nome: string;
-    }) => {
-      const { usuarioId, cpf, nome } = data;
+    const createConsumer = async (data: { usuarioId: string; cpf: string }) => {
+      const { usuarioId, cpf } = data;
 
       const response = await consumidorResource.create({
         usuarioId,
         cpf,
-        nome,
       });
 
       return response;
@@ -171,37 +171,30 @@ router.post(
       });
     };
 
-    await queuedAsyncMap(
-      usersConsumers,
-      async (data: { cpf: string; nome: string }) => {
-        const user = await createUserConsumer({
-          login: data.cpf,
-          nome: data.nome,
-        });
+    await queuedAsyncMap(usersConsumers, async (data: any) => {
+      const user = await createUserConsumer({
+        login: data.cpf,
+        nome: data.nome,
+      });
 
-        return createConsumer({
-          usuarioId: user.id,
-          cpf: data.cpf,
-          nome: data.nome,
-        });
-      }
-    );
+      return createConsumer({
+        usuarioId: user.id,
+        cpf: data.cpf,
+      });
+    });
 
-    await queuedAsyncMap(
-      usersShookeepers,
-      async (data: { cnpj: string; nome: string }) => {
-        const user = await createUserShookeeper({
-          login: data.cnpj,
-          nome: data.nome,
-        });
+    await queuedAsyncMap(usersShookeepers, async (data: any) => {
+      const user = await createUserShookeeper({
+        login: data.cnpj,
+        nome: data.nome,
+      });
 
-        return createShopkeeper({
-          usuarioId: user.id,
-          cnpj: data.cnpj,
-          nome: data.nome,
-        });
-      }
-    );
+      return createShopkeeper({
+        usuarioId: user.id,
+        cnpj: data.cnpj,
+        nome: data.nome,
+      });
+    });
 
     await queuedAsyncMap(data, (item: DebitsData) => createDebit(item));
 
