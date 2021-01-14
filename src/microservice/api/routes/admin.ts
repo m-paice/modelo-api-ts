@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { uniq } from 'lodash';
+import { uniqBy } from 'lodash';
 
 import debitoResource from '../../../resource/Debito';
 import usuarioResource from '../../../resource/Usuario';
@@ -62,42 +62,81 @@ router.post(
   async (req, res) => {
     const data = await readingCsv(req.file.path);
 
-    const usersConsumers = uniq(data.map((i: DebitsData) => i.DOCUMENTO));
-    const usersShookeepers = uniq(data.map((i: DebitsData) => i.CNPJ));
+    const usersConsumers = uniqBy(
+      data.map((i: DebitsData) => ({
+        cpf: i.DOCUMENTO,
+        nome: i.NOME,
+      })),
+      'cpf'
+    );
+    const usersShookeepers = uniqBy(
+      data.map((i: DebitsData) => ({
+        cnpj: i.CNPJ,
+        nome: i.ASSOCIADO,
+      })),
+      'cnpj'
+    );
 
-    const createUserConsumer = async (login: string) => {
+    const createUserConsumer = async (data: {
+      login: string;
+      nome: string;
+    }) => {
+      const { login, nome } = data;
+
       // TODO: don't emit CREATED event
       const response = await usuarioResource.create({
         login,
+        nome,
         ativo: false,
       });
 
       return response;
     };
 
-    const createUserShookeeper = async (login: string) => {
+    const createUserShookeeper = async (data: {
+      login: string;
+      nome: string;
+    }) => {
+      const { login, nome } = data;
+
       // TODO: don't emit CREATED event
       const response = await usuarioResource.create({
         login,
+        nome,
         ativo: false,
       });
 
       return response;
     };
 
-    const createConsumer = async (cpf: string, usuarioId: string) => {
+    const createConsumer = async (data: {
+      usuarioId: string;
+      cpf: string;
+      nome: string;
+    }) => {
+      const { usuarioId, cpf, nome } = data;
+
       const response = await consumidorResource.create({
         usuarioId,
         cpf,
+        nome,
       });
 
       return response;
     };
 
-    const createShopkeeper = async (cnpj: string, usuarioId: string) => {
+    const createShopkeeper = async (data: {
+      usuarioId: string;
+      cnpj: string;
+      nome: string;
+    }) => {
+      const { usuarioId, cnpj, nome } = data;
+
       const response = await lojistaResource.create({
         usuarioId,
         cnpj,
+        razaoSocial: nome,
+        fantasia: nome,
       });
 
       return response;
@@ -132,17 +171,37 @@ router.post(
       });
     };
 
-    await queuedAsyncMap(usersConsumers, async (document: string) => {
-      const user = await createUserConsumer(document);
+    await queuedAsyncMap(
+      usersConsumers,
+      async (data: { cpf: string; nome: string }) => {
+        const user = await createUserConsumer({
+          login: data.cpf,
+          nome: data.nome,
+        });
 
-      return createConsumer(document, user.id);
-    });
+        return createConsumer({
+          usuarioId: user.id,
+          cpf: data.cpf,
+          nome: data.nome,
+        });
+      }
+    );
 
-    await queuedAsyncMap(usersShookeepers, async (document: string) => {
-      const user = await createUserShookeeper(document);
+    await queuedAsyncMap(
+      usersShookeepers,
+      async (data: { cnpj: string; nome: string }) => {
+        const user = await createUserShookeeper({
+          login: data.cnpj,
+          nome: data.nome,
+        });
 
-      return createShopkeeper(document, user.id);
-    });
+        return createShopkeeper({
+          usuarioId: user.id,
+          cnpj: data.cnpj,
+          nome: data.nome,
+        });
+      }
+    );
 
     await queuedAsyncMap(data, (item: DebitsData) => createDebit(item));
 
