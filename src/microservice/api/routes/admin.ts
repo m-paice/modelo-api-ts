@@ -89,11 +89,14 @@ router.post(
       const { login, nome } = data;
 
       // TODO: don't emit CREATED event
-      const response = await usuarioResource.create({
-        login,
-        nome,
-        ativo: false,
-      });
+      const response = await usuarioResource.create(
+        {
+          login,
+          nome,
+          ativo: false,
+        },
+        { dontEmit: true }
+      );
 
       return response;
     };
@@ -105,11 +108,14 @@ router.post(
       const { login, nome } = data;
 
       // TODO: don't emit CREATED event
-      const response = await usuarioResource.create({
-        login,
-        nome,
-        ativo: false,
-      });
+      const response = await usuarioResource.create(
+        {
+          login,
+          nome,
+          ativo: false,
+        },
+        { dontEmit: true }
+      );
 
       return response;
     };

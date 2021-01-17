@@ -5,11 +5,9 @@ import PagamentoJob from './jobs/Pagamento';
 import Job from './interfaces/Job';
 
 export default class App {
-  protected withAmqpResources = true;
-
   protected jobs: [string, Job][] = [
-    ['* * * * 2 *', new BoletoJob()],
-    ['* * * * 2 *', new PagamentoJob()],
+    ['*/5 * * * * *', new BoletoJob()],
+    ['* * * * 5 *', new PagamentoJob()],
   ];
 
   protected runningJobs: Schedule.Job[];

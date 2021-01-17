@@ -4,6 +4,7 @@ import sequelize from '../services/sequelize';
 
 export type DadosBancariosInstance = {
   id: string;
+  lojistaId: string;
   tipo: string;
   banco: string;
   nomeInstituicao: string;
@@ -40,8 +41,8 @@ const DadosBancarios = sequelize.define(
     },
   },
   {
-    tableName: 'dadosbancarios',
-  },
+    tableName: 'dados_bancarios',
+  }
 );
 
 DadosBancarios.associate = (models) => {

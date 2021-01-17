@@ -2,10 +2,13 @@ import Sequelize from 'sequelize';
 
 import sequelize from '../services/sequelize';
 
+import { UsuarioInstance } from './Usuario';
+
 export type ConsumidorInstance = {
   id: string;
   usuarioId: string;
   cpf: string;
+  usuario?: UsuarioInstance;
   createdAt?: Date;
   updatedAt?: Date;
 };

@@ -1,6 +1,6 @@
 module.exports = {
   up: (queryInterface, Sequelize) =>
-    queryInterface.createTable("dadosbancarios", {
+    queryInterface.createTable('dados_bancarios', {
       id: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
@@ -11,8 +11,8 @@ module.exports = {
         type: Sequelize.UUID,
         allowNull: false,
         references: {
-          model: "lojista",
-          key: "id",
+          model: 'lojista',
+          key: 'id',
         },
       },
       tipo: {
@@ -54,5 +54,5 @@ module.exports = {
     }),
 
   down: (queryInterface, Sequelize) =>
-    queryInterface.dropTable("dadosbancarios"),
+    queryInterface.dropTable('dados_bancarios'),
 };

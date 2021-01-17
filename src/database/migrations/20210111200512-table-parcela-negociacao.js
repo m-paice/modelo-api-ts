@@ -20,6 +20,7 @@ module.exports = {
       valorParcela: Sequelize.DECIMAL,
       dataPagamento: Sequelize.DATE,
       situacao: Sequelize.STRING,
+      notificacao: Sequelize.JSONB,
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false,

@@ -2,6 +2,8 @@ import Sequelize from 'sequelize';
 
 import sequelize from '../services/sequelize';
 
+import { NegociacaoInstance } from './Negociacao';
+
 export type ParcelaNegociacaoInstance = {
   id: string;
   negociacaoId: string;
@@ -10,6 +12,13 @@ export type ParcelaNegociacaoInstance = {
   valorParcela: number;
   dataPagamento: Date;
   situacao: string;
+  notificacao: {
+    doisDiasAntes: boolean;
+    diaAtual: boolean;
+    umDiaDepois: boolean;
+    cincoDiasDopois: boolean;
+  };
+  negociacao?: NegociacaoInstance;
   createdAt?: Date;
   updatedAt?: Date;
 };
@@ -27,6 +36,7 @@ const ParcelaNegociacao = sequelize.define(
     valorParcela: Sequelize.DECIMAL,
     dataPagamento: Sequelize.DATE,
     situacao: Sequelize.STRING,
+    notificacao: Sequelize.JSONB,
     createdAt: {
       type: Sequelize.DATE,
       allowNull: false,

@@ -11,6 +11,10 @@ export type Instance = {
   id: string;
 };
 
+export interface IOptions<T> extends FindOptions<T> {
+  dontEmit: boolean;
+}
+
 export default class BaseResource<TModel extends Instance> {
   protected readonly repository: BaseSequelizeRepository<TModel>;
 
@@ -81,7 +85,12 @@ export default class BaseResource<TModel extends Instance> {
     return this.getRepository().findMany(query);
   }
 
-  findById(id: string, query?: FindOptions<TModel>): Promise<TModel> {
+  findById(
+    id: string,
+    query: IOptions<TModel> = {
+      dontEmit: false,
+    }
+  ): Promise<TModel> {
     return this.getRepository().findById(id, query);
   }
 
@@ -89,26 +98,42 @@ export default class BaseResource<TModel extends Instance> {
     return this.getRepository().findOne(query);
   }
 
-  create(data: Partial<TModel>, options: Options = {}): Promise<TModel> {
+  create(
+    data: Partial<TModel>,
+    options: IOptions<TModel> = {
+      dontEmit: false,
+    }
+  ): Promise<TModel> {
     return this.getRepository()
       .create(data, options)
-      .then(
-        (response) =>
-          // this.emitCreated(response);
-          response
-      );
-  }
-
-  update(model: TModel, data: TModel, options: Options = {}) {
-    return this.getRepository()
-      .update(model, data, options)
       .then((response) => {
-        this.emitUpdated(response);
+        if (!options.dontEmit) this.emitCreated(response);
         return response;
       });
   }
 
-  updateById(id: string, data: TModel, options: Options = {}) {
+  update(
+    model: TModel,
+    data: Partial<TModel>,
+    options: IOptions<TModel> = {
+      dontEmit: false,
+    }
+  ) {
+    return this.getRepository()
+      .update(model, data, options)
+      .then((response) => {
+        if (!options.dontEmit) this.emitUpdated(response);
+        return response;
+      });
+  }
+
+  updateById(
+    id: string,
+    data: Partial<TModel>,
+    options: IOptions<TModel> = {
+      dontEmit: false,
+    }
+  ) {
     return this.getRepository()
       .findById(id, options)
       .then((model) => this.update(model, data, options));

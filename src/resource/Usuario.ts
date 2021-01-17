@@ -4,6 +4,8 @@ import BaseResource from './BaseResource';
 
 import consumidorResource from './Consumidor';
 import lojistaResource from './Lojista';
+import enderecoResource from './Endereco';
+import dadosBancariosResource from './DadosBancarios';
 
 export class UsuarioResource extends BaseResource<UsuarioInstance> {
   constructor() {
@@ -18,8 +20,10 @@ export class UsuarioResource extends BaseResource<UsuarioInstance> {
     return usuarioRepository.decodedToken(data);
   }
 
-  async recreateClientInative(userId: string, payload) {
-    const user = await usuarioRepository.updateById(userId, payload);
+  async userConsumerInative(userId: string, payload) {
+    const user = await this.updateById(userId, payload, { dontEmit: true });
+    await this.emitCreated(user);
+
     const consumer = await consumidorResource.findOne({
       where: {
         usuarioId: userId,
@@ -36,6 +40,41 @@ export class UsuarioResource extends BaseResource<UsuarioInstance> {
       user,
       document: 'pf',
     };
+  }
+
+  async userShoopeerkInative(userId: string, payload) {
+    const user = await this.updateById(userId, payload, {
+      dontEmit: true,
+    });
+    await this.emitCreated(user);
+
+    const shoopeerk = await lojistaResource.findOne({
+      where: {
+        usuarioId: user.id,
+      },
+    });
+
+    await this.criarEndereco({ ...payload, usuarioId: user.id });
+    await this.criarDadosBancarios({ ...payload, lojistaId: shoopeerk.id });
+
+    const token = await this.auth({
+      user: user.id,
+      lojistaId: shoopeerk.id,
+    });
+
+    return {
+      token,
+      user,
+      document: 'pj',
+    };
+  }
+
+  async criarEndereco(data) {
+    return enderecoResource.create(data);
+  }
+
+  async criarDadosBancarios(data) {
+    return dadosBancariosResource.create(data);
   }
 
   async criarConsumidor(data: {
@@ -57,7 +96,7 @@ export class UsuarioResource extends BaseResource<UsuarioInstance> {
     }
 
     // quando documento (cpf) já existir
-    const isClient = await usuarioRepository.findOne({
+    const isClient = await this.findOne({
       where: {
         login: data.cpf,
         ativo: true,
@@ -67,7 +106,7 @@ export class UsuarioResource extends BaseResource<UsuarioInstance> {
     if (isClient) throw 'user already exists';
 
     // quando o sistema já cadastrou o usuário
-    const isClientInative = await usuarioRepository.findOne({
+    const isClientInative = await this.findOne({
       where: {
         login: data.cpf,
         ativo: false,
@@ -75,10 +114,10 @@ export class UsuarioResource extends BaseResource<UsuarioInstance> {
     });
 
     if (isClientInative) {
-      return this.recreateClientInative(isClientInative.id, payload);
+      return this.userConsumerInative(isClientInative.id, payload);
     }
 
-    const user = await usuarioRepository.create(payload);
+    const user = await this.create(payload);
 
     const consumer = await consumidorResource.create({
       usuarioId: user.id,
@@ -114,7 +153,7 @@ export class UsuarioResource extends BaseResource<UsuarioInstance> {
     }
 
     // quando documento (cpf) já existir
-    const isClient = await usuarioRepository.findOne({
+    const isClient = await this.findOne({
       where: {
         login: data.cnpj,
         ativo: true,
@@ -124,7 +163,7 @@ export class UsuarioResource extends BaseResource<UsuarioInstance> {
     if (isClient) throw 'user already exists';
 
     // quando o sistema já cadastrou o usuário
-    const isClientInative = await usuarioRepository.findOne({
+    const isClientInative = await this.findOne({
       where: {
         login: data.cnpj,
         ativo: false,
@@ -132,30 +171,10 @@ export class UsuarioResource extends BaseResource<UsuarioInstance> {
     });
 
     if (isClientInative) {
-      const user = await usuarioRepository.updateById(
-        isClientInative.id,
-        payload
-      );
-
-      const shoopeerk = await lojistaResource.findOne({
-        where: {
-          usuarioId: user.id,
-        },
-      });
-
-      const token = await this.auth({
-        user: user.id,
-        lojistaId: shoopeerk.id,
-      });
-
-      return {
-        token,
-        user,
-        document: 'pj',
-      };
+      return this.userShoopeerkInative(isClientInative.id, payload);
     }
 
-    const user = await usuarioRepository.create(payload);
+    const user = await this.create(payload);
 
     const shookeeper = await lojistaResource.create({
       usuarioId: user.id,
