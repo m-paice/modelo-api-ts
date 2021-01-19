@@ -9,6 +9,8 @@ import Negociacao from '../../../models/Negociacao';
 import Consumidor from '../../../models/Consumidor';
 import Lojista from '../../../models/Lojista';
 import ParcelaNegociacao from '../../../models/ParcelaNegociacao';
+import Endereco from '../../../models/Endereco';
+import DadosBancarios from '../../../models/DadosBancarios';
 
 import { promiseHandler } from '../../../utils/routing';
 
@@ -33,6 +35,12 @@ const include = [
         model: Usuario,
         as: 'usuario',
         attributes: ['nome'],
+        include: [
+          {
+            model: Endereco,
+            as: 'endereco',
+          },
+        ],
       },
     ],
   },
@@ -43,7 +51,17 @@ const include = [
       {
         model: Usuario,
         as: 'usuario',
-        attributes: ['nome'],
+        attributes: ['nome', 'email', 'celular'],
+        include: [
+          {
+            model: Endereco,
+            as: 'endereco',
+          },
+        ],
+      },
+      {
+        model: DadosBancarios,
+        as: 'dadosBancarios',
       },
     ],
   },

@@ -40,13 +40,17 @@ const Lojista = sequelize.define(
   },
   {
     tableName: 'lojista',
-  },
+  }
 );
 
 Lojista.associate = (models) => {
   Lojista.belongsTo(models.Usuario, {
     foreignKey: 'usuarioId',
     as: 'usuario',
+  });
+  Lojista.hasOne(models.DadosBancarios, {
+    foreignKey: 'lojistaId',
+    as: 'dadosBancarios',
   });
 };
 

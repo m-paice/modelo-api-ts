@@ -50,4 +50,11 @@ const Usuario = sequelize.define(
   }
 );
 
+Usuario.associate = (models) => {
+  Usuario.hasOne(models.Endereco, {
+    foreignKey: 'usuarioId',
+    as: 'endereco',
+  });
+};
+
 export default Usuario;
