@@ -5,6 +5,7 @@ import sequelize from '../services/sequelize';
 export type LojistaInstance = {
   id: string;
   usuarioId: string;
+  associacaoId: string;
   razaoSocial: string;
   fantasia: string;
   cnpj: string;
@@ -47,6 +48,10 @@ Lojista.associate = (models) => {
   Lojista.belongsTo(models.Usuario, {
     foreignKey: 'usuarioId',
     as: 'usuario',
+  });
+  Lojista.belongsTo(models.Associacao, {
+    foreignKey: 'associacaoId',
+    as: 'associacao',
   });
   Lojista.hasOne(models.DadosBancarios, {
     foreignKey: 'lojistaId',

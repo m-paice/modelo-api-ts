@@ -30,7 +30,7 @@ const Debito = sequelize.define(
     status: Sequelize.STRING,
     tipoDoc: Sequelize.STRING,
     contrato: Sequelize.STRING,
-    valor: Sequelize.DECIMAL,
+    valor: Sequelize.DOUBLE,
     vencimento: Sequelize.STRING,
     createdAt: {
       type: Sequelize.DATE,

@@ -85,12 +85,7 @@ export default class BaseResource<TModel extends Instance> {
     return this.getRepository().findMany(query);
   }
 
-  findById(
-    id: string,
-    query: IOptions<TModel> = {
-      dontEmit: false,
-    }
-  ): Promise<TModel> {
+  findById(id: string, query?: FindOptions<TModel>): Promise<TModel> {
     return this.getRepository().findById(id, query);
   }
 

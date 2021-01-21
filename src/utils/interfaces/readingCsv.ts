@@ -2,6 +2,7 @@ export interface DebitsData {
   NOME: string;
   DOCUMENTO: string;
   ASSOCIADO: string;
+  ASSOCIACAO: string;
   CNPJ: string;
   SEQDIV: string;
   INCLUSAO: string;

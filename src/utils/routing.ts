@@ -3,6 +3,9 @@ import { ServerResponse } from 'http';
 
 interface IRequest extends Request {
   user: any;
+  consumidorId: string;
+  lojistaId: string;
+  associacaoId: string;
 }
 
 type HandlerFunction = (

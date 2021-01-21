@@ -15,6 +15,7 @@ export type UsuarioInstance = {
   };
   token: {};
   ativo: boolean;
+  habilitado: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 };
@@ -36,6 +37,7 @@ const Usuario = sequelize.define(
     pessoais: Sequelize.JSONB,
     token: Sequelize.JSONB,
     ativo: Sequelize.BOOLEAN,
+    habilitado: Sequelize.BOOLEAN, // flag para verificar se deve carregar os dados
     createdAt: {
       type: Sequelize.DATE,
       allowNull: false,

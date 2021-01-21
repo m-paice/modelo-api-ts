@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express';
+import { Router, Request } from 'express';
 
 import resourceController from '../../../resource/controller';
 import usuarioResource from '../../../resource/Usuario';
@@ -10,7 +10,7 @@ const router = Router();
 
 const controllerUsuario = {
   ...controller,
-  create: promiseHandler((req: Request, res: Response) => {
+  create: promiseHandler((req: Request) => {
     if (req.body.document === 'consumidor') {
       return usuarioResource.criarConsumidor(req.body);
     }

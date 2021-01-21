@@ -20,6 +20,7 @@ module.exports = {
       termos: Sequelize.JSONB,
       token: Sequelize.JSONB,
       ativo: Sequelize.BOOLEAN,
+      habilitado: Sequelize.BOOLEAN,
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false,

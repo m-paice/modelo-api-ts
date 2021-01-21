@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express';
+import { Router, Request } from 'express';
 
 import resourceController from '../../../resource/controller';
 import debitoResource from '../../../resource/Debito';
@@ -79,22 +79,26 @@ const include = [
 
 const controllerDebito = {
   ...controller,
-  indexConsumer: promiseHandler((req: IRequest, res: Response) =>
-    debitoResource.findMany({
+  indexConsumer: promiseHandler(async (req: IRequest) => {
+    const response = await debitoResource.findMany({
       where: {
         consumidorId: req.consumidorId,
       },
       include,
-    })
-  ),
-  indexShoopeerk: promiseHandler((req: IRequest, res: Response) =>
-    debitoResource.findMany({
+    });
+
+    return response;
+  }),
+  indexShoopeerk: promiseHandler(async (req: IRequest) => {
+    const response = await debitoResource.findMany({
       where: {
         lojistaId: req.lojistaId,
       },
       include,
-    })
-  ),
+    });
+
+    return response;
+  }),
 };
 
 router.get('/consumidor', auth, controllerDebito.indexConsumer);

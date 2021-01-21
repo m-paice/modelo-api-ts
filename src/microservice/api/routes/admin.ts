@@ -6,6 +6,7 @@ import usuarioResource from '../../../resource/Usuario';
 import consumidorResource from '../../../resource/Consumidor';
 import lojistaResource from '../../../resource/Lojista';
 import reguaNegociacaoResource from '../../../resource/ReguaNegociacao';
+import associacaoResource from '../../../resource/Associacao';
 
 // utils
 import generateDate from '../../../utils/generateDate';
@@ -78,6 +79,7 @@ router.post(
       data.map((i: DebitsData) => ({
         cnpj: i.CNPJ,
         nome: i.ASSOCIADO,
+        associacao: i.ASSOCIACAO,
       })),
       'cnpj'
     );
@@ -94,6 +96,7 @@ router.post(
           login,
           nome,
           ativo: false,
+          habilitado: true,
         },
         { dontEmit: true }
       );
@@ -113,6 +116,7 @@ router.post(
           login,
           nome,
           ativo: false,
+          habilitado: false,
         },
         { dontEmit: true }
       );
@@ -135,14 +139,22 @@ router.post(
       usuarioId: string;
       cnpj: string;
       nome: string;
+      associacao: string;
     }) => {
-      const { usuarioId, cnpj, nome } = data;
+      const { usuarioId, cnpj, nome, associacao } = data;
+
+      const association = await associacaoResource.findOne({
+        where: {
+          cnpj: associacao,
+        },
+      });
 
       const response = await lojistaResource.create({
         usuarioId,
         cnpj,
         razaoSocial: nome,
         fantasia: nome,
+        associacaoId: association.id,
       });
 
       return response;
@@ -199,6 +211,7 @@ router.post(
         usuarioId: user.id,
         cnpj: data.cnpj,
         nome: data.nome,
+        associacao: data.associacao,
       });
     });
 

@@ -11,6 +11,7 @@ import Debito from './Debito';
 import ReguaNegociacao from './ReguaNegociacao';
 import Negociacao from './Negociacao';
 import ParcelaNegociacao from './ParcelaNegociacao';
+import Associacao from './Associacao';
 
 export default {
   Usuario,
@@ -26,4 +27,5 @@ export default {
   ReguaNegociacao,
   Negociacao,
   ParcelaNegociacao,
+  Associacao,
 };

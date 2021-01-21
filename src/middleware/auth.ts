@@ -5,6 +5,7 @@ interface IRequest extends Request {
   user: any;
   consumidorId: string;
   lojistaId: string;
+  associacaoId: string;
 }
 
 const auth = (req: IRequest, res: Response, next: NextFunction) => {
@@ -23,6 +24,7 @@ const auth = (req: IRequest, res: Response, next: NextFunction) => {
   req.user = decoded.user;
   req.consumidorId = decoded.consumidorId;
   req.lojistaId = decoded.lojistaId;
+  req.associacaoId = decoded.associacaoId;
 
   return next();
 };

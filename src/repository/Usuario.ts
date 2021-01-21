@@ -5,6 +5,7 @@ import BaseRepository from './BaseRepository';
 
 import consumidorResource from '../resource/Consumidor';
 import lojistaResource from '../resource/Lojista';
+import associacaoResource from '../resource/Associacao';
 
 import validators from '../utils/validators';
 
@@ -19,6 +20,25 @@ class UsuarioRepository extends BaseRepository<UsuarioInstance> {
     return jwt.sign({ ...user }, this.verifyToken);
   }
 
+  async userAssociation(user) {
+    const association = await associacaoResource.findOne({
+      where: {
+        cnpj: user.login,
+      },
+    });
+
+    const token = jwt.sign(
+      { user, associacaoId: association.id },
+      this.verifyToken
+    );
+
+    return {
+      token,
+      user,
+      document: 'associacao',
+    };
+  }
+
   async decodedToken(data: { login: string; senha: string }) {
     const user: any = await Usuario.findOne({
       where: {
@@ -29,6 +49,11 @@ class UsuarioRepository extends BaseRepository<UsuarioInstance> {
 
     if (!user) {
       throw new Error('user not found');
+    }
+
+    if (user.login === '00.000.000/0001-00') {
+      // TODO: verificar uma outra forma de buscar usuario associacao
+      return this.userAssociation(user);
     }
 
     const document = validators.document(data.login);
