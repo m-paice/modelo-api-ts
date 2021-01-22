@@ -9,4 +9,6 @@ COPY build /app/
 COPY .env /app/
 COPY .sequelizerc /app/
 
+VOLUME /app/uploads
+
 CMD ["npm", "start"]
