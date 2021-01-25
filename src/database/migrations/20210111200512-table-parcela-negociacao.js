@@ -17,7 +17,7 @@ module.exports = {
       },
       parcela: Sequelize.INTEGER,
       vencimento: Sequelize.DATE,
-      valorParcela: Sequelize.DECIMAL,
+      valorParcela: Sequelize.DOUBLE,
       dataPagamento: Sequelize.DATE,
       situacao: Sequelize.STRING,
       notificacao: Sequelize.JSONB,
