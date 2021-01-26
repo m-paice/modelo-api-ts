@@ -13,6 +13,7 @@ export type DebitoInstance = {
   contrato: string;
   valor: number;
   vencimento: string;
+  habilitado: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 };
@@ -32,6 +33,7 @@ const Debito = sequelize.define(
     contrato: Sequelize.STRING,
     valor: Sequelize.DOUBLE,
     vencimento: Sequelize.STRING,
+    habilitado: Sequelize.BOOLEAN,
     createdAt: {
       type: Sequelize.DATE,
       allowNull: false,

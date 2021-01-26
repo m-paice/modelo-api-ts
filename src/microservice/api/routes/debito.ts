@@ -83,6 +83,7 @@ const controllerDebito = {
     const response = await debitoResource.findMany({
       where: {
         consumidorId: req.consumidorId,
+        habilitado: true,
       },
       include,
     });
@@ -99,10 +100,24 @@ const controllerDebito = {
 
     return response;
   }),
+  update: promiseHandler(async (req: IRequest) => {
+    const { id } = req.params;
+    const { body } = req;
+
+    const response = await debitoResource.updateById(id, body, {
+      where: {
+        lojistaId: req.lojistaId,
+      },
+      include,
+    });
+
+    return response;
+  }),
 };
 
 router.get('/consumidor', auth, controllerDebito.indexConsumer);
 router.get('/lojista', auth, controllerDebito.indexShoopeerk);
 router.get('/:id', auth, controller.show);
+router.put('/:id', auth, controllerDebito.update);
 
 export default router;

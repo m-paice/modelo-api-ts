@@ -12,7 +12,7 @@ export type Instance = {
 };
 
 export interface IOptions<T> extends FindOptions<T> {
-  dontEmit: boolean;
+  dontEmit?: boolean;
 }
 
 export default class BaseResource<TModel extends Instance> {
