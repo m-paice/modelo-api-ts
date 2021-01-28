@@ -31,7 +31,7 @@ export class UsuarioResource extends BaseResource<UsuarioInstance> {
     });
 
     const token = await this.auth({
-      userId: user.id,
+      user,
       consumidorId: consumer.id,
     });
 
@@ -58,7 +58,7 @@ export class UsuarioResource extends BaseResource<UsuarioInstance> {
     await this.criarDadosBancarios({ ...payload, lojistaId: shoopeerk.id });
 
     const token = await this.auth({
-      user: user.id,
+      user,
       lojistaId: shoopeerk.id,
     });
 
@@ -125,7 +125,7 @@ export class UsuarioResource extends BaseResource<UsuarioInstance> {
     });
 
     const token = await this.auth({
-      userId: user.id,
+      user,
       consumidorId: consumer.id,
     });
 
@@ -182,7 +182,7 @@ export class UsuarioResource extends BaseResource<UsuarioInstance> {
     });
 
     const token = await this.auth({
-      user: user.id,
+      user,
       lojistaId: shookeeper.id,
     });
 
