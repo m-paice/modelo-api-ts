@@ -10,6 +10,7 @@ import consumidorRoutes from './consumidor';
 import reguaNegociacaoRoutes from './reguaNegociacao';
 import negociacaoRoutes from './negociacao';
 import associacaoRoutes from './associcao';
+import pagamentoRoutes from './pagamento';
 
 import * as loggers from '../../../utils/logger';
 
@@ -32,5 +33,16 @@ routes.use('/debito', debitoRoutes);
 routes.use('/regua-negociacao', reguaNegociacaoRoutes);
 routes.use('/negociacao', negociacaoRoutes);
 routes.use('/associacao', associacaoRoutes);
+routes.use('/pagamento', pagamentoRoutes);
+
+routes.post('/postback', (req, res) => {
+  console.log(req.params);
+  console.log(req.query);
+  console.log(req.body);
+
+  return res.json({
+    message: 'ok',
+  });
+});
 
 export default routes;

@@ -7,18 +7,18 @@ import debitoResource from './Debito';
 import reguaNegociacaoResource from './ReguaNegociacao';
 import parcelaNegociacaoResource from './ParcelaNegociacao';
 
-// utils
-import generateDate from '../utils/generateDate';
+import { pagarComCartao } from '../services/pagarme';
 
 export class NegociacaoResource extends BaseResource<NegociacaoInstance> {
   constructor() {
     super(negociacaoRepository);
   }
 
+  // @ts-ignore
   async create(data, options) {
     const debito = await debitoResource.findById(data.debitoId);
     const reguaNegociacao = await reguaNegociacaoResource.findById(
-      data.reguaNegociacaoId,
+      data.reguaNegociacaoId
     );
 
     if (!debito || !reguaNegociacao) {
@@ -42,20 +42,53 @@ export class NegociacaoResource extends BaseResource<NegociacaoInstance> {
     });
 
     // criar as parcelas da negociacao
-    Array.from({ length: data.parcelamento }).forEach(async (item, index) => {
-      const vencimento = index === 0
-        ? negociation.dataVencimento
-        : addMonths(negociation.dataVencimento, index);
-      const valorParcela = negociation.negociado / negociation.parcelamento;
+    await Promise.all(
+      Array.from({ length: data.parcelamento }).map((_, index) => {
+        const vencimento =
+          index === 0
+            ? negociation.dataVencimento
+            : addMonths(negociation.dataVencimento, index);
+        const valorParcela = negociation.negociado / negociation.parcelamento;
 
-      await parcelaNegociacaoResource.create({
-        negociacaoId: negociation.id,
-        parcela: index + 1,
-        vencimento,
-        valorParcela,
-        situacao: 'proxima',
+        return parcelaNegociacaoResource.create({
+          negociacaoId: negociation.id,
+          parcela: index + 1,
+          vencimento,
+          valorParcela,
+          situacao: 'proxima',
+        });
+      })
+    );
+
+    if (data.formaPagamento === 'cartao') {
+      const primeiraParcela = await parcelaNegociacaoResource.findOne({
+        where: {
+          negociacaoId: negociation.id,
+          parcela: 1,
+        },
       });
-    });
+
+      const { id, nome, login, email, celular, nascimento } = data.usuario;
+
+      await pagarComCartao({
+        price: primeiraParcela.valorParcela * 100,
+        cardNumber: data.numeroCartao,
+        cardHolderName: data.nomeCartao,
+        cardExpiration: data.expiracaoCartao,
+        cardCode: data.codigoCartao,
+        name: nome,
+        document: login,
+        email,
+        phoneNumber: celular,
+        birthday: new Date(nascimento),
+        usuarioId: id,
+      });
+
+      await parcelaNegociacaoResource.updateById(primeiraParcela.id, {
+        dataPagamento: new Date(),
+        situacao: 'pago',
+      });
+    }
 
     return negociation;
   }

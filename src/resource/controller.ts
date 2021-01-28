@@ -37,11 +37,15 @@ export default <T>(resource: any) => {
   };
 
   const create = async (req: IRequest, res: Response) => {
-    const { body, query, consumidorId, lojistaId } = req;
+    const {
+      body, query, consumidorId, lojistaId, user,
+    } = req;
 
     try {
       const response = await resource
-        .create({ consumidorId, lojistaId, ...body }, query)
+        .create({
+          consumidorId, lojistaId, usuario: user, ...body,
+        }, query)
         .then((data: Partial<T>) => data);
 
       return res.json(response);
