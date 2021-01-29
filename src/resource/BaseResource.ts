@@ -93,11 +93,15 @@ export default class BaseResource<TModel extends Instance> {
     return this.getRepository().findOne(query);
   }
 
+  count(query: FindOptions<TModel>): Promise<number> {
+    return this.getRepository().count(query);
+  }
+
   create(
     data: Partial<TModel>,
     options: IOptions<TModel> = {
       dontEmit: false,
-    }
+    },
   ): Promise<TModel> {
     return this.getRepository()
       .create(data, options)
@@ -112,7 +116,7 @@ export default class BaseResource<TModel extends Instance> {
     data: Partial<TModel>,
     options: IOptions<TModel> = {
       dontEmit: false,
-    }
+    },
   ) {
     return this.getRepository()
       .update(model, data, options)
@@ -127,7 +131,7 @@ export default class BaseResource<TModel extends Instance> {
     data: Partial<TModel>,
     options: IOptions<TModel> = {
       dontEmit: false,
-    }
+    },
   ) {
     return this.getRepository()
       .findById(id, options)

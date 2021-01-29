@@ -18,7 +18,7 @@ export class NegociacaoResource extends BaseResource<NegociacaoInstance> {
   async create(data, options) {
     const debito = await debitoResource.findById(data.debitoId);
     const reguaNegociacao = await reguaNegociacaoResource.findById(
-      data.reguaNegociacaoId
+      data.reguaNegociacaoId,
     );
 
     if (!debito || !reguaNegociacao) {
@@ -44,10 +44,9 @@ export class NegociacaoResource extends BaseResource<NegociacaoInstance> {
     // criar as parcelas da negociacao
     await Promise.all(
       Array.from({ length: data.parcelamento }).map((_, index) => {
-        const vencimento =
-          index === 0
-            ? negociation.dataVencimento
-            : addMonths(negociation.dataVencimento, index);
+        const vencimento = index === 0
+          ? negociation.dataVencimento
+          : addMonths(negociation.dataVencimento, index);
         const valorParcela = negociation.negociado / negociation.parcelamento;
 
         return parcelaNegociacaoResource.create({
@@ -57,10 +56,16 @@ export class NegociacaoResource extends BaseResource<NegociacaoInstance> {
           valorParcela,
           situacao: 'proxima',
         });
-      })
+      }),
     );
 
     if (data.formaPagamento === 'cartao') {
+      const countParcelas = await parcelaNegociacaoResource.count({
+        where: {
+          negociacaoId: negociation.id,
+        },
+      });
+
       const primeiraParcela = await parcelaNegociacaoResource.findOne({
         where: {
           negociacaoId: negociation.id,
@@ -68,7 +73,9 @@ export class NegociacaoResource extends BaseResource<NegociacaoInstance> {
         },
       });
 
-      const { id, nome, login, email, celular, nascimento } = data.usuario;
+      const {
+        id, nome, login, email, celular, nascimento,
+      } = data.usuario;
 
       await pagarComCartao({
         price: negociado * 100,
@@ -86,6 +93,18 @@ export class NegociacaoResource extends BaseResource<NegociacaoInstance> {
         dataPagamento: new Date(),
         situacao: 'pago',
       });
+
+      if (countParcelas === 1) {
+        // parcelas que tem apenas 1 deve ser quitada
+        await this.updateById(negociation.id, {
+          recebido: negociado,
+          situacao: 'quitado',
+        });
+      } else {
+        await this.updateById(negociation.id, {
+          recebido: primeiraParcela.valorParcela,
+        });
+      }
     }
 
     return negociation;

@@ -26,6 +26,10 @@ class BaseRepository<T> {
     return this.model.findByPk(id, options);
   }
 
+  count(options: FindOptions<T>): Promise<number> {
+    return this.model.count(options);
+  }
+
   create(data: Partial<T>, options?: CreateOptions): Promise<T> {
     return this.model.create(data, options);
   }
