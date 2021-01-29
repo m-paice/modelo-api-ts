@@ -7,6 +7,8 @@ import consumidorResource from '../resource/Consumidor';
 import lojistaResource from '../resource/Lojista';
 import associacaoResource from '../resource/Associacao';
 
+import HttpError from '../utils/error/HttpError';
+
 import validators from '../utils/validators';
 
 class UsuarioRepository extends BaseRepository<UsuarioInstance> {
@@ -48,7 +50,7 @@ class UsuarioRepository extends BaseRepository<UsuarioInstance> {
     });
 
     if (!user) {
-      throw new Error('user not found');
+      return new HttpError(500, 'usuário não encontrado.');
     }
 
     if (user.login === '00.000.000/0001-00') {

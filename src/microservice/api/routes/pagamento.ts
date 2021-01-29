@@ -1,7 +1,6 @@
 import { Router, Request } from 'express';
 
 import parcelaNegociacaoResource from '../../../resource/ParcelaNegociacao';
-import usuarioResource from '../../../resource/Usuario';
 
 import { pagarComBoleto } from '../../../services/pagarme';
 
@@ -24,16 +23,16 @@ router.post('/boleto', auth, async (req: IRequest, res) => {
     throw new Error('parcela não encontrada!');
   }
 
-  const usuario = await usuarioResource.findById(req.user.id);
+  const usuario = req.user;
 
   await pagarComBoleto({
+    id: usuario.id,
     document: usuario.login,
     name: usuario.nome,
     price: parcelaNegociacao.valorParcela * 100,
     dueDate: new Date(parcelaNegociacao.vencimento),
-    // dados opcioanis
     email: usuario.email,
-    phoneNumber: `+55${usuario.celular.replace(/([^\d])+/gim, '')}`,
+    phoneNumber: usuario.celular,
     birthday: new Date(usuario.nascimento),
   });
 
@@ -44,10 +43,12 @@ router.post('/boleto', auth, async (req: IRequest, res) => {
   });
 });
 
-router.post('/cartao', async (req, res) =>
-  res.json({
-    message: 'ok',
-  })
-);
+router.post('/cartao', async (req, res) => {
+  const message = 'ok';
+
+  return res.json({
+    message,
+  });
+});
 
 export default router;

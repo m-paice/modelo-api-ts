@@ -71,11 +71,9 @@ export class NegociacaoResource extends BaseResource<NegociacaoInstance> {
       const { id, nome, login, email, celular, nascimento } = data.usuario;
 
       await pagarComCartao({
-        price: primeiraParcela.valorParcela * 100,
-        cardNumber: data.numeroCartao,
-        cardHolderName: data.nomeCartao,
-        cardExpiration: data.expiracaoCartao,
-        cardCode: data.codigoCartao,
+        price: negociado * 100,
+        installments: Number(data.parcelamento),
+        cardHash: data.cardHash,
         name: nome,
         document: login,
         email,
