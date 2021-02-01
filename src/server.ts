@@ -45,6 +45,7 @@ class Server {
     this.express.use(cors());
     this.express.use(morgan('dev'));
     this.express.use(bodyParser.json());
+    this.express.use(express.urlencoded({ extended: true }));
   }
 
   routes() {

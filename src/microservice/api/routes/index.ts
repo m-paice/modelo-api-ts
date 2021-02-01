@@ -12,6 +12,9 @@ import negociacaoRoutes from './negociacao';
 import associacaoRoutes from './associcao';
 import pagamentoRoutes from './pagamento';
 
+// resource
+import transacaoResource from '../../../resource/Transacao';
+
 import * as loggers from '../../../utils/logger';
 
 const routes = Router();
@@ -35,10 +38,8 @@ routes.use('/negociacao', negociacaoRoutes);
 routes.use('/associacao', associacaoRoutes);
 routes.use('/pagamento', pagamentoRoutes);
 
-routes.post('/postback', (req, res) => {
-  console.log(req.params);
-  console.log(req.query);
-  console.log(req.body);
+routes.post('/postback', async (req, res) => {
+  await transacaoResource.verificaPostback(req.body);
 
   return res.json({
     message: 'ok',

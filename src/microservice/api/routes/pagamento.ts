@@ -1,8 +1,7 @@
 import { Router, Request } from 'express';
 
 import parcelaNegociacaoResource from '../../../resource/ParcelaNegociacao';
-
-import { pagarComBoleto } from '../../../services/pagarme';
+import transacaoResource from '../../../resource/Transacao';
 
 import auth from '../../../middleware/auth';
 
@@ -15,6 +14,7 @@ interface IRequest extends Request {
 const router = Router();
 
 router.post('/boleto', auth, async (req: IRequest, res) => {
+  const { user } = req;
   const { parcelaId } = req.body;
 
   const parcelaNegociacao = await parcelaNegociacaoResource.findById(parcelaId);
@@ -23,31 +23,15 @@ router.post('/boleto', auth, async (req: IRequest, res) => {
     throw new Error('parcela não encontrada!');
   }
 
-  const usuario = req.user;
-
-  await pagarComBoleto({
-    id: usuario.id,
-    document: usuario.login,
-    name: usuario.nome,
-    price: parcelaNegociacao.valorParcela * 100,
-    dueDate: new Date(parcelaNegociacao.vencimento),
-    email: usuario.email,
-    phoneNumber: usuario.celular,
-    birthday: new Date(usuario.nascimento),
+  await transacaoResource.validaPagamentoBoleto({
+    parcelaNegociacaoId: parcelaId,
+    usuario: user,
+    valorParcela: parcelaNegociacao.valorParcela,
+    vencimento: parcelaNegociacao.vencimento,
   });
-
-  // TODO: retornar o boleto para o usuário
 
   return res.json({
     message: 'ok',
-  });
-});
-
-router.post('/cartao', async (req, res) => {
-  const message = 'ok';
-
-  return res.json({
-    message,
   });
 });
 

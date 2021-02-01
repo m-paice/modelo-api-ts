@@ -12,6 +12,7 @@ import ReguaNegociacao from './ReguaNegociacao';
 import Negociacao from './Negociacao';
 import ParcelaNegociacao from './ParcelaNegociacao';
 import Associacao from './Associacao';
+import Transacao from './Transacao';
 
 export default {
   Usuario,
@@ -28,4 +29,5 @@ export default {
   Negociacao,
   ParcelaNegociacao,
   Associacao,
+  Transacao,
 };

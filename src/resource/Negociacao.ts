@@ -1,24 +1,25 @@
 import { addMonths } from 'date-fns';
-import negociacaoRepository from '../repository/Negociacao';
-import { NegociacaoInstance } from '../models/Negociacao';
-import BaseResource from './BaseResource';
 
+// repository
+import negociacaoRepository from '../repository/Negociacao';
+// model
+import { NegociacaoInstance } from '../models/Negociacao';
+// resource
+import BaseResource from './BaseResource';
 import debitoResource from './Debito';
 import reguaNegociacaoResource from './ReguaNegociacao';
 import parcelaNegociacaoResource from './ParcelaNegociacao';
-
-import { pagarComCartao } from '../services/pagarme';
+import transacaoResource from './Transacao';
 
 export class NegociacaoResource extends BaseResource<NegociacaoInstance> {
   constructor() {
     super(negociacaoRepository);
   }
 
-  // @ts-ignore
   async create(data, options) {
     const debito = await debitoResource.findById(data.debitoId);
     const reguaNegociacao = await reguaNegociacaoResource.findById(
-      data.reguaNegociacaoId,
+      data.reguaNegociacaoId
     );
 
     if (!debito || !reguaNegociacao) {
@@ -44,9 +45,10 @@ export class NegociacaoResource extends BaseResource<NegociacaoInstance> {
     // criar as parcelas da negociacao
     await Promise.all(
       Array.from({ length: data.parcelamento }).map((_, index) => {
-        const vencimento = index === 0
-          ? negociation.dataVencimento
-          : addMonths(negociation.dataVencimento, index);
+        const vencimento =
+          index === 0
+            ? negociation.dataVencimento
+            : addMonths(negociation.dataVencimento, index);
         const valorParcela = negociation.negociado / negociation.parcelamento;
 
         return parcelaNegociacaoResource.create({
@@ -56,58 +58,48 @@ export class NegociacaoResource extends BaseResource<NegociacaoInstance> {
           valorParcela,
           situacao: 'proxima',
         });
-      }),
+      })
     );
 
+    // validar o pagamento
     if (data.formaPagamento === 'cartao') {
-      const countParcelas = await parcelaNegociacaoResource.count({
-        where: {
-          negociacaoId: negociation.id,
-        },
+      await transacaoResource.validaPagamentoCartao({
+        ...data,
+        negociacaoId: negociation.id,
+        valorDebito: debito.valor,
+        valorDesconto: reguaNegociacao.desconto,
       });
-
-      const primeiraParcela = await parcelaNegociacaoResource.findOne({
-        where: {
-          negociacaoId: negociation.id,
-          parcela: 1,
-        },
-      });
-
-      const {
-        id, nome, login, email, celular, nascimento,
-      } = data.usuario;
-
-      await pagarComCartao({
-        price: negociado * 100,
-        installments: Number(data.parcelamento),
-        cardHash: data.cardHash,
-        name: nome,
-        document: login,
-        email,
-        phoneNumber: celular,
-        birthday: new Date(nascimento),
-        usuarioId: id,
-      });
-
-      await parcelaNegociacaoResource.updateById(primeiraParcela.id, {
-        dataPagamento: new Date(),
-        situacao: 'pago',
-      });
-
-      if (countParcelas === 1) {
-        // parcelas que tem apenas 1 deve ser quitada
-        await this.updateById(negociation.id, {
-          recebido: negociado,
-          situacao: 'quitado',
-        });
-      } else {
-        await this.updateById(negociation.id, {
-          recebido: primeiraParcela.valorParcela,
-        });
-      }
     }
 
     return negociation;
+  }
+
+  async destroyById(id, options) {
+    const parcelas = await parcelaNegociacaoResource.findMany({
+      where: {
+        negociacaoId: id,
+      },
+    });
+
+    const transacoes = await transacaoResource.findMany({
+      where: {
+        negociacaoId: id,
+      },
+    });
+
+    // remover todas as parcelas
+    Promise.all(
+      parcelas.map(async (item) =>
+        parcelaNegociacaoResource.destroyById(item.id)
+      )
+    );
+
+    // remover todas as transações
+    Promise.all(
+      transacoes.map(async (item) => transacaoResource.destroyById(item.id))
+    );
+
+    return negociacaoRepository.destroyById(id, options);
   }
 }
 

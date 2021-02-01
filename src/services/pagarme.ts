@@ -2,6 +2,7 @@ import pagarme from 'pagarme';
 import { format } from 'date-fns';
 
 const API_KEY = 'ak_test_4qhZhjzL7fnvy5AMFluiwBSiDLTMA5';
+const POSTBACK_URL = 'https://e13a46b86420.ngrok.io/postback';
 
 const defaultCustomer = (data: {
   id: string;
@@ -11,9 +12,7 @@ const defaultCustomer = (data: {
   phoneNumber: string;
   birthday: Date;
 }) => {
-  const {
-    id, name, document, email, phoneNumber, birthday,
-  } = data;
+  const { id, name, document, email, phoneNumber, birthday } = data;
 
   return {
     external_id: id,
@@ -67,35 +66,37 @@ export const pagarComCartao = async (data: {
   try {
     const resposne = await pagarme.client
       .connect({ api_key: API_KEY })
-      .then((client) => client.transactions.create({
-        amount: price,
-        card_hash: cardHash,
-        installments,
-        payment_method: 'credit_card',
-        postback_url: 'https://5766abe859e3.ngrok.io/postback',
-        billing: {
-          name: 'Trinity Moss',
-          address: {
-            country: 'br',
-            state: 'sp',
-            city: 'Cotia',
-            neighborhood: 'Rio Cotia',
-            street: 'Rua Matrix',
-            street_number: '9999',
-            zipcode: '06714360',
+      .then((client) =>
+        client.transactions.create({
+          amount: price,
+          card_hash: cardHash,
+          installments,
+          payment_method: 'credit_card',
+          postback_url: POSTBACK_URL,
+          billing: {
+            name: 'Trinity Moss',
+            address: {
+              country: 'br',
+              state: 'sp',
+              city: 'Cotia',
+              neighborhood: 'Rio Cotia',
+              street: 'Rua Matrix',
+              street_number: '9999',
+              zipcode: '06714360',
+            },
           },
-        },
-        items: [
-          {
-            id: 'r123',
-            title: 'Pagamento de',
-            unit_price: 10000,
-            quantity: 1,
-            tangible: true,
-          },
-        ],
-        customer,
-      }));
+          items: [
+            {
+              id: 'r123',
+              title: 'Pagamento de',
+              unit_price: 10000,
+              quantity: 1,
+              tangible: true,
+            },
+          ],
+          customer,
+        })
+      );
 
     return resposne;
   } catch (error) {
@@ -105,7 +106,7 @@ export const pagarComCartao = async (data: {
 };
 
 export const pagarComBoleto = async (data: {
-  id: string;
+  usuarioId: string;
   price: number;
   name: string;
   document: string;
@@ -115,11 +116,18 @@ export const pagarComBoleto = async (data: {
   birthday: Date;
 }) => {
   const {
-    id, price, name, document, dueDate, email, phoneNumber, birthday,
+    usuarioId,
+    price,
+    name,
+    document,
+    dueDate,
+    email,
+    phoneNumber,
+    birthday,
   } = data;
 
   const customer = defaultCustomer({
-    id,
+    id: usuarioId,
     name,
     document,
     email,
@@ -130,13 +138,15 @@ export const pagarComBoleto = async (data: {
   try {
     const response = await pagarme.client
       .connect({ api_key: API_KEY })
-      .then((client) => client.transactions.create({
-        amount: price,
-        payment_method: 'boleto',
-        postback_url: 'https://5766abe859e3.ngrok.io/postback',
-        boleto_expiration_date: dueDate,
-        customer,
-      }));
+      .then((client) =>
+        client.transactions.create({
+          amount: price,
+          payment_method: 'boleto',
+          postback_url: POSTBACK_URL,
+          boleto_expiration_date: dueDate,
+          customer,
+        })
+      );
 
     return response;
   } catch (error) {

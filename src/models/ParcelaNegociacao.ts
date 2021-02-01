@@ -45,9 +45,13 @@ const ParcelaNegociacao = sequelize.define(
       type: Sequelize.DATE,
       allowNull: false,
     },
+    deletedAt: {
+      type: Sequelize.DATE,
+    },
   },
   {
     tableName: 'parcela_negociacao',
+    paranoid: true,
   }
 );
 
