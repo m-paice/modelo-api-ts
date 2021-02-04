@@ -1,8 +1,18 @@
 import pagarme from 'pagarme';
 import { format } from 'date-fns';
 
-const API_KEY = 'ak_test_4qhZhjzL7fnvy5AMFluiwBSiDLTMA5';
-const POSTBACK_URL = 'https://e13a46b86420.ngrok.io/postback';
+const URL_ENV = {
+  development: '',
+  production: 'https://api.qa.credas.com.br',
+};
+
+const KEY_ENV = {
+  development: 'ak_test_4qhZhjzL7fnvy5AMFluiwBSiDLTMA5',
+  production: 'ak_live_WSMtLvK2ItOPteW3xlaerIzxJO6Abf',
+};
+
+const API_KEY = KEY_ENV.production;
+const POSTBACK_URL = `${URL_ENV.production}/postback`;
 
 const defaultCustomer = (data: {
   id: string;
@@ -64,10 +74,11 @@ export const pagarComCartao = async (data: {
   });
 
   try {
-    const resposne = await pagarme.client
+    const response = await pagarme.client
       .connect({ api_key: API_KEY })
       .then((client) =>
         client.transactions.create({
+          async: false,
           amount: price,
           card_hash: cardHash,
           installments,
@@ -88,8 +99,8 @@ export const pagarComCartao = async (data: {
           items: [
             {
               id: 'r123',
-              title: 'Pagamento de',
-              unit_price: 10000,
+              title: 'Pagamento de débito',
+              unit_price: price,
               quantity: 1,
               tangible: true,
             },
@@ -98,7 +109,7 @@ export const pagarComCartao = async (data: {
         })
       );
 
-    return resposne;
+    return response;
   } catch (error) {
     console.log(JSON.stringify(error, null, '\t'));
     return error;
@@ -140,6 +151,7 @@ export const pagarComBoleto = async (data: {
       .connect({ api_key: API_KEY })
       .then((client) =>
         client.transactions.create({
+          async: false,
           amount: price,
           payment_method: 'boleto',
           postback_url: POSTBACK_URL,

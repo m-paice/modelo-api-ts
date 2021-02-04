@@ -2,11 +2,13 @@ import Schedule from 'node-schedule';
 
 import BoletoJob from './jobs/Boleto';
 import PagamentoJob from './jobs/Pagamento';
+import ParcelasJob from './jobs/Parcelas';
 import Job from './interfaces/Job';
 
 export default class App {
   protected jobs: [string, Job][] = [
     ['*/5 * * * * *', new BoletoJob()],
+    ['*/5 * * * * *', new ParcelasJob()],
     ['* * * * 5 *', new PagamentoJob()],
   ];
 

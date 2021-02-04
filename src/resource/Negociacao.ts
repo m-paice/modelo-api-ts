@@ -74,6 +74,31 @@ export class NegociacaoResource extends BaseResource<NegociacaoInstance> {
     return negociation;
   }
 
+  async quitarNegociacao(data: {
+    negociacaoId: string;
+    valorNegociado: number;
+  }) {
+    const { negociacaoId, valorNegociado } = data;
+
+    await this.updateById(negociacaoId, {
+      situacao: 'quitado',
+      negociado: valorNegociado,
+    });
+  }
+
+  async receberValorParcelaNegociacao(data: {
+    negociacaoId: string;
+    valorParcela: number;
+  }) {
+    const { negociacaoId, valorParcela } = data;
+
+    const negociacao = await this.findById(negociacaoId);
+
+    await this.updateById(negociacaoId, {
+      recebido: negociacao.recebido + valorParcela,
+    });
+  }
+
   async destroyById(id, options) {
     const parcelas = await parcelaNegociacaoResource.findMany({
       where: {

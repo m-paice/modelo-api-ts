@@ -5,6 +5,8 @@ import BaseResource from './BaseResource';
 // resource
 import parcelaNegociacaoResource from './ParcelaNegociacao';
 import negociacaoResource from './Negociacao';
+import carteiraResource from './Carteira';
+import parcelaFuturaResource from './ParcelaFutura';
 // service
 import { pagarComCartao, pagarComBoleto } from '../services/pagarme';
 
@@ -20,7 +22,9 @@ export class TransacaoResource extends BaseResource<TransacaoInstance> {
     usuario: any;
   }) {
     const { negociado, parcelamento, cardHash } = data;
-    const { id, nome, login, email, celular, nascimento } = data.usuario;
+    const {
+      id, nome, login, email, celular, nascimento,
+    } = data.usuario;
 
     const response = await pagarComCartao({
       price: negociado * 100,
@@ -63,7 +67,9 @@ export class TransacaoResource extends BaseResource<TransacaoInstance> {
     usuario: any;
   }) {
     const { valorParcela, vencimento } = data;
-    const { id, nome, login, email, celular, nascimento } = data.usuario;
+    const {
+      id, nome, login, email, celular, nascimento,
+    } = data.usuario;
 
     const response = await pagarComBoleto({
       usuarioId: id,
@@ -87,10 +93,25 @@ export class TransacaoResource extends BaseResource<TransacaoInstance> {
       status: response.status,
       parcelaNegociacaoId: data.parcelaNegociacaoId,
     });
+
+    return response;
+  }
+
+  async registrarLancamentos(data: { lojistaId: string; valor: number }) {
+    const { lojistaId, valor } = data;
+
+    await carteiraResource.registrarComissao({
+      lojistaId,
+      valor,
+    });
   }
 
   async transactionChanged(data) {
-    const { id, current_status } = data;
+    const {
+      id,
+      current_status,
+      transaction: { payment_method },
+    } = data;
 
     const transacao = await this.findOne({
       where: {
@@ -104,27 +125,126 @@ export class TransacaoResource extends BaseResource<TransacaoInstance> {
       status: current_status,
     });
 
+    const typePaymentMethodPaid = {
+      async credit_card() {
+        const countParcelas = await parcelaNegociacaoResource.count({
+          where: {
+            negociacaoId: transacao.negociacaoId,
+          },
+        });
+
+        if (countParcelas === 1) {
+          const parcela = await parcelaNegociacaoResource.findOne({
+            where: {
+              negociacaoId: transacao.negociacaoId,
+            },
+          });
+
+          // pagar parcela
+          await parcelaNegociacaoResource.pagarParcelaNegociacao({
+            parcelaNegociacaoId: parcela.id,
+          });
+
+          const negociacao = await negociacaoResource.findById(
+            transacao.negociacaoId,
+          );
+
+          // registrar o recebimento e a comissao
+          await carteiraResource.registraLancamentos({
+            lojistaId: negociacao.lojistaId,
+            valor: parcela.valorParcela,
+          });
+
+          // atualizar a negociacao
+          await negociacaoResource.receberValorParcelaNegociacao({
+            negociacaoId: transacao.negociacaoId,
+            valorParcela: parcela.valorParcela,
+          });
+
+          // quitar a negociacao
+          await negociacaoResource.quitarNegociacao({
+            negociacaoId: transacao.negociacaoId,
+            valorNegociado: parcela.valorParcela,
+          });
+
+          return;
+        }
+
+        const parcela = await parcelaNegociacaoResource.findOne({
+          where: {
+            negociacaoId: transacao.negociacaoId,
+            parcela: 1,
+          },
+        });
+
+        // pagar parcela
+        await parcelaNegociacaoResource.pagarParcelaNegociacao({
+          parcelaNegociacaoId: parcela.id,
+        });
+
+        const negociacao = await negociacaoResource.findById(
+          transacao.negociacaoId,
+        );
+
+        // registrar o recebimento e a comissao
+        await carteiraResource.registraLancamentos({
+          lojistaId: negociacao.lojistaId,
+          valor: parcela.valorParcela,
+        });
+
+        // registrar as proximas parcelas a serem recebidas
+        await parcelaFuturaResource.registrarProximasParcelas({
+          negociacaoId: transacao.negociacaoId,
+        });
+
+        // atualizar a negociacao
+        await negociacaoResource.receberValorParcelaNegociacao({
+          negociacaoId: transacao.negociacaoId,
+          valorParcela: parcela.valorParcela,
+        });
+
+        // TODO: tratar quando a ultima parcela for paga
+      },
+      async boleto() {
+        const parcela = await parcelaNegociacaoResource.updateById(
+          transacao.parcelaNegociacaoId,
+          {
+            situacao: 'pago',
+          },
+        );
+
+        const negociacao = await negociacaoResource.findById(
+          transacao.negociacaoId,
+        );
+
+        // registrar o recebimento e a comissao
+        await carteiraResource.registraLancamentos({
+          lojistaId: negociacao.lojistaId,
+          valor: parcela.valorParcela,
+        });
+      },
+    };
+
+    const typePaymentMethodRefused = {
+      async credit_card() {
+        await negociacaoResource.updateById(transacao.negociacaoId, {
+          situacao: 'recusado',
+        });
+      },
+      boleto() {},
+    };
+
     const statusTransaction = {
       async processing() {},
       async authorized() {},
       async paid() {
-        if (data.payment_method === 'boleto') {
-          await parcelaNegociacaoResource.updateById(
-            transacao.parcelaNegociacaoId,
-            {
-              dataPagamento: new Date(),
-              situacao: 'pago',
-            }
-          );
-        }
+        await typePaymentMethodPaid[payment_method]();
       },
       async refunded() {},
       async waiting_payment() {},
       async pending_refund() {},
       async refused() {
-        await negociacaoResource.updateById(transacao.negociacaoId, {
-          situacao: 'recusado',
-        });
+        await typePaymentMethodRefused[payment_method]();
       },
       async analyzing() {},
       async pending_review() {},

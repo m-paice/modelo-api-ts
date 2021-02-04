@@ -10,7 +10,7 @@ export type AssociacaoInstance = {
   updatedAt?: Date;
 };
 
-const Associacao = sequelize.define<AssociacaoInstance, any, any>(
+const Associacao = sequelize.define(
   'Associacao',
   {
     id: {

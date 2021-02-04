@@ -11,6 +11,7 @@ import reguaNegociacaoRoutes from './reguaNegociacao';
 import negociacaoRoutes from './negociacao';
 import associacaoRoutes from './associcao';
 import pagamentoRoutes from './pagamento';
+import carteiraRoutes from './carteira';
 
 // resource
 import transacaoResource from '../../../resource/Transacao';
@@ -37,6 +38,7 @@ routes.use('/regua-negociacao', reguaNegociacaoRoutes);
 routes.use('/negociacao', negociacaoRoutes);
 routes.use('/associacao', associacaoRoutes);
 routes.use('/pagamento', pagamentoRoutes);
+routes.use('/carteira', carteiraRoutes);
 
 routes.post('/postback', async (req, res) => {
   await transacaoResource.verificaPostback(req.body);

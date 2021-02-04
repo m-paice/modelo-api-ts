@@ -6,6 +6,15 @@ export class ParcelaNegociacaoResource extends BaseResource<ParcelaNegociacaoIns
   constructor() {
     super(ParcelaNegociacaoRepository);
   }
+
+  async pagarParcelaNegociacao(data: { parcelaNegociacaoId: string }) {
+    const { parcelaNegociacaoId } = data;
+
+    await this.updateById(parcelaNegociacaoId, {
+      dataPagamento: new Date(),
+      situacao: 'pago',
+    });
+  }
 }
 
 export default new ParcelaNegociacaoResource();

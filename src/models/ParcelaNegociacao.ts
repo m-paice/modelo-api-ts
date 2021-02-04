@@ -18,6 +18,7 @@ export type ParcelaNegociacaoInstance = {
     umDiaDepois: boolean;
     cincoDiasDopois: boolean;
   };
+  boletoUrl: string;
   negociacao?: NegociacaoInstance;
   createdAt?: Date;
   updatedAt?: Date;
@@ -37,6 +38,7 @@ const ParcelaNegociacao = sequelize.define(
     dataPagamento: Sequelize.DATE,
     situacao: Sequelize.STRING,
     notificacao: Sequelize.JSONB,
+    boletoUrl: Sequelize.STRING,
     createdAt: {
       type: Sequelize.DATE,
       allowNull: false,

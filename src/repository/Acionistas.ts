@@ -1,5 +1,5 @@
-import Acionistas, { AcionistasInstance } from "../models/Acionistas";
-import BaseRepository from "./BaseRepository";
+import Acionistas, { AcionistasInstance } from '../models/Acionistas';
+import BaseRepository from './BaseRepository';
 
 class AcionistasRepository extends BaseRepository<AcionistasInstance> {
   constructor() {

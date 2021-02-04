@@ -3,6 +3,7 @@ import Sequelize from 'sequelize';
 import sequelize from '../services/sequelize';
 
 import { ConsumidorInstance } from './Consumidor';
+import { ParcelaNegociacaoInstance } from './ParcelaNegociacao';
 
 export type NegociacaoInstance = {
   id: string;
@@ -19,7 +20,8 @@ export type NegociacaoInstance = {
   formaPagamento: string;
   parcelamento: number;
   dataVencimento: Date;
-  consumidor?: ConsumidorInstance;
+  consumidor: ConsumidorInstance;
+  parcelas: [ParcelaNegociacaoInstance];
   createdAt?: Date;
   updatedAt?: Date;
 };

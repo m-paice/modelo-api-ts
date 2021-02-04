@@ -79,6 +79,8 @@ class UsuarioRepository extends BaseRepository<UsuarioInstance> {
         },
       });
 
+      console.log('shopkeeper: ', shopkeeper.id);
+
       token = jwt.sign({ user, lojistaId: shopkeeper.id }, this.verifyToken);
     }
 

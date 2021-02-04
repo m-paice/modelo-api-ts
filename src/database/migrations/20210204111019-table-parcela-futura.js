@@ -1,29 +1,22 @@
 module.exports = {
   up: (queryInterface, Sequelize) =>
-    queryInterface.createTable('parcela_negociacao', {
+    queryInterface.createTable('parcela_futura', {
       id: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true,
         allowNull: false,
       },
-      negociacaoId: {
+      parcelaNegociacaoId: {
         type: Sequelize.UUID,
         allowNull: false,
         references: {
-          model: 'negociacao',
+          model: 'parcela_negociacao',
           key: 'id',
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE',
       },
-      parcela: Sequelize.INTEGER,
-      vencimento: Sequelize.DATE,
-      valorParcela: Sequelize.DOUBLE,
-      dataPagamento: Sequelize.DATE,
-      situacao: Sequelize.STRING,
-      notificacao: Sequelize.JSONB,
-      boletoUrl: Sequelize.STRING,
+      expiraEm: Sequelize.DATE,
+      resolvida: Sequelize.BOOLEAN,
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false,
@@ -32,11 +25,8 @@ module.exports = {
         type: Sequelize.DATE,
         allowNull: false,
       },
-      deletedAt: {
-        type: Sequelize.DATE,
-      },
     }),
 
   down: (queryInterface, Sequelize) =>
-    queryInterface.dropTable('parcela_negociacao'),
+    queryInterface.dropTable('parcela_futura'),
 };

@@ -23,16 +23,19 @@ router.post('/boleto', auth, async (req: IRequest, res) => {
     throw new Error('parcela não encontrada!');
   }
 
-  await transacaoResource.validaPagamentoBoleto({
+  const response = await transacaoResource.validaPagamentoBoleto({
     parcelaNegociacaoId: parcelaId,
     usuario: user,
     valorParcela: parcelaNegociacao.valorParcela,
     vencimento: parcelaNegociacao.vencimento,
   });
 
-  return res.json({
-    message: 'ok',
+  await parcelaNegociacaoResource.updateById(parcelaId, {
+    situacao: 'aguardando',
+    boletoUrl: response.boleto_url,
   });
+
+  return res.sendStatus(200);
 });
 
 export default router;

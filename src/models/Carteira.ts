@@ -2,28 +2,29 @@ import Sequelize from 'sequelize';
 
 import sequelize from '../services/sequelize';
 
-export type AcionistasInstance = {
+export type CarteiraInstance = {
   id: string;
+  lojistaId: string;
+  documento: string;
   nome: string;
-  quota: string;
-  cpf: string;
-  dataNascimento: Date;
+  operacao: string;
+  valor: number;
   createdAt?: Date;
   updatedAt?: Date;
 };
 
-const Acionistas = sequelize.define(
-  'Acionistas',
+const Carteira = sequelize.define<CarteiraInstance, any, any>(
+  'Carteira',
   {
     id: {
       type: Sequelize.UUID,
       defaultValue: Sequelize.UUIDV4,
       primaryKey: true,
     },
+    documento: Sequelize.STRING,
     nome: Sequelize.STRING,
-    quota: Sequelize.STRING,
-    cpf: Sequelize.STRING,
-    dataNascimento: Sequelize.DATE,
+    operacao: Sequelize.STRING,
+    valor: Sequelize.DOUBLE,
     createdAt: {
       type: Sequelize.DATE,
       allowNull: false,
@@ -34,15 +35,15 @@ const Acionistas = sequelize.define(
     },
   },
   {
-    tableName: 'acionistas',
+    tableName: 'carteira',
   }
 );
 
-Acionistas.associate = (models) => {
-  Acionistas.belongsTo(models.Lojista, {
+Carteira.associate = (models) => {
+  Carteira.belongsTo(models.Lojista, {
     foreignKey: 'lojistaId',
     as: 'lojista',
   });
 };
 
-export default Acionistas;
+export default Carteira;

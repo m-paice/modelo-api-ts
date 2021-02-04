@@ -13,6 +13,8 @@ import Negociacao from './Negociacao';
 import ParcelaNegociacao from './ParcelaNegociacao';
 import Associacao from './Associacao';
 import Transacao from './Transacao';
+import Carteira from './Carteira';
+import ParcelaFutura from './ParcelaFutura';
 
 export default {
   Usuario,
@@ -30,4 +32,6 @@ export default {
   ParcelaNegociacao,
   Associacao,
   Transacao,
+  Carteira,
+  ParcelaFutura,
 };
