@@ -7,8 +7,19 @@ import parcelaNegociacaoResource from './ParcelaNegociacao';
 import negociacaoResource from './Negociacao';
 import carteiraResource from './Carteira';
 import parcelaFuturaResource from './ParcelaFutura';
+// model
+import Consumidor from '../models/Consumidor';
+import Usuario from '../models/Usuario';
 // service
 import { pagarComCartao, pagarComBoleto } from '../services/pagarme';
+
+const includeNegociacao = [
+  {
+    model: Consumidor,
+    as: 'consumidor',
+    include: [{ model: Usuario, as: 'usuario', attributes: ['nome'] }],
+  },
+];
 
 export class TransacaoResource extends BaseResource<TransacaoInstance> {
   constructor() {
@@ -22,9 +33,7 @@ export class TransacaoResource extends BaseResource<TransacaoInstance> {
     usuario: any;
   }) {
     const { negociado, parcelamento, cardHash } = data;
-    const {
-      id, nome, login, email, celular, nascimento,
-    } = data.usuario;
+    const { id, nome, login, email, celular, nascimento } = data.usuario;
 
     const response = await pagarComCartao({
       price: negociado * 100,
@@ -67,9 +76,7 @@ export class TransacaoResource extends BaseResource<TransacaoInstance> {
     usuario: any;
   }) {
     const { valorParcela, vencimento } = data;
-    const {
-      id, nome, login, email, celular, nascimento,
-    } = data.usuario;
+    const { id, nome, login, email, celular, nascimento } = data.usuario;
 
     const response = await pagarComBoleto({
       usuarioId: id,
@@ -146,7 +153,7 @@ export class TransacaoResource extends BaseResource<TransacaoInstance> {
           });
 
           const negociacao = await negociacaoResource.findById(
-            transacao.negociacaoId,
+            transacao.negociacaoId
           );
 
           // registrar o recebimento e a comissao
@@ -184,11 +191,17 @@ export class TransacaoResource extends BaseResource<TransacaoInstance> {
 
         const negociacao = await negociacaoResource.findById(
           transacao.negociacaoId,
+          {
+            include: includeNegociacao,
+          }
         );
 
         // registrar o recebimento e a comissao
         await carteiraResource.registraLancamentos({
           lojistaId: negociacao.lojistaId,
+          reguaNegociacaoId: negociacao.reguaNegociacaoId,
+          documento: negociacao.consumidor.cpf,
+          nome: negociacao.consumidor.usuario.nome,
           valor: parcela.valorParcela,
         });
 
@@ -203,6 +216,11 @@ export class TransacaoResource extends BaseResource<TransacaoInstance> {
           valorParcela: parcela.valorParcela,
         });
 
+        // quitar a negociacao
+        await negociacaoResource.quitarNegociacao({
+          negociacaoId: transacao.negociacaoId,
+        });
+
         // TODO: tratar quando a ultima parcela for paga
       },
       async boleto() {
@@ -210,16 +228,22 @@ export class TransacaoResource extends BaseResource<TransacaoInstance> {
           transacao.parcelaNegociacaoId,
           {
             situacao: 'pago',
-          },
+          }
         );
 
         const negociacao = await negociacaoResource.findById(
           transacao.negociacaoId,
+          {
+            include: includeNegociacao,
+          }
         );
 
         // registrar o recebimento e a comissao
         await carteiraResource.registraLancamentos({
           lojistaId: negociacao.lojistaId,
+          reguaNegociacaoId: negociacao.reguaNegociacaoId,
+          documento: negociacao.consumidor.cpf,
+          nome: negociacao.consumidor.usuario.nome,
           valor: parcela.valorParcela,
         });
       },

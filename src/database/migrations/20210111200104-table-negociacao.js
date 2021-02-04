@@ -31,6 +31,14 @@ module.exports = {
           key: 'id',
         },
       },
+      reguaNegociacaoId: {
+        type: Sequelize.UUID,
+        allowNull: false,
+        references: {
+          model: 'regua_negociacao',
+          key: 'id',
+        },
+      },
       dataRegistro: Sequelize.DATE,
       divida: Sequelize.DOUBLE,
       desconto: Sequelize.DOUBLE,

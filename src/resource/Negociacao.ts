@@ -32,6 +32,7 @@ export class NegociacaoResource extends BaseResource<NegociacaoInstance> {
     // cria a negociacao
     const negociation = await negociacaoRepository.create({
       ...data,
+      reguaNegociacaoId: reguaNegociacao.id,
       parcelamento: Number(data.parcelamento),
       dataRegistro: new Date(),
       desconto,
@@ -76,13 +77,13 @@ export class NegociacaoResource extends BaseResource<NegociacaoInstance> {
 
   async quitarNegociacao(data: {
     negociacaoId: string;
-    valorNegociado: number;
+    valorNegociado?: number;
   }) {
     const { negociacaoId, valorNegociado } = data;
 
     await this.updateById(negociacaoId, {
       situacao: 'quitado',
-      negociado: valorNegociado,
+      ...(valorNegociado && { negociado: valorNegociado }),
     });
   }
 

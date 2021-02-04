@@ -2,7 +2,7 @@ import pagarme from 'pagarme';
 import { format } from 'date-fns';
 
 const URL_ENV = {
-  development: '',
+  development: 'https://86e7df729b42.ngrok.io',
   production: 'https://api.qa.credas.com.br',
 };
 
@@ -11,7 +11,7 @@ const KEY_ENV = {
   production: 'ak_live_WSMtLvK2ItOPteW3xlaerIzxJO6Abf',
 };
 
-const API_KEY = KEY_ENV.production;
+const API_KEY = KEY_ENV.development;
 const POSTBACK_URL = `${URL_ENV.production}/postback`;
 
 const defaultCustomer = (data: {

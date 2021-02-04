@@ -15,6 +15,7 @@ import DadosBancarios from '../../../models/DadosBancarios';
 import { promiseHandler } from '../../../utils/routing';
 
 import auth from '../../../middleware/auth';
+import verificaLojistaHabilitado from '../../../middleware/verificaLojistaHabilitado';
 
 interface IRequest extends Request {
   user: any;
@@ -51,7 +52,7 @@ const include = [
       {
         model: Usuario,
         as: 'usuario',
-        attributes: ['nome', 'email', 'celular'],
+        attributes: ['nome', 'email', 'celular', 'habilitado'],
         include: [
           {
             model: Endereco,
@@ -116,7 +117,12 @@ const controllerDebito = {
 };
 
 router.get('/consumidor', auth, controllerDebito.indexConsumer);
-router.get('/lojista', auth, controllerDebito.indexShoopeerk);
+router.get(
+  '/lojista',
+  auth,
+  verificaLojistaHabilitado,
+  controllerDebito.indexShoopeerk
+);
 router.get('/:id', auth, controller.show);
 router.put('/:id', auth, controllerDebito.update);
 

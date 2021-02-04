@@ -2,31 +2,43 @@ import carteiraRepository from '../repository/Carteira';
 import { CarteiraInstance } from '../models/Carteira';
 import BaseResource from './BaseResource';
 
-import LojistaResource from './Lojista';
+import reguaNegociacaoResource from './ReguaNegociacao';
 
 export class CarteiraResource extends BaseResource<CarteiraInstance> {
   constructor() {
     super(carteiraRepository);
   }
 
-  async registrarRecebimento(data: { lojistaId: string; valor: number }) {
-    const { lojistaId, valor } = data;
+  async registrarRecebimento(data: {
+    lojistaId: string;
 
-    const lojista = await LojistaResource.findById(lojistaId);
+    documento: string;
+    nome: string;
+    valor: number;
+  }) {
+    const { lojistaId, documento, nome, valor } = data;
 
     return this.create({
       lojistaId,
-      documento: lojista.cnpj,
-      nome: lojista.razaoSocial,
+      documento,
+      nome,
       operacao: 'recebimento',
       valor,
     });
   }
 
-  async registrarComissao(data: { lojistaId: string; valor: number }) {
-    const { lojistaId, valor } = data;
+  async registrarComissao(data: {
+    lojistaId: string;
+    reguaNegociacaoId: string;
+    valor: number;
+  }) {
+    const { lojistaId, reguaNegociacaoId, valor } = data;
 
-    const valorTaxa = valor * 0.15; // 15% de taxa
+    const reguaNegociacao = await reguaNegociacaoResource.findById(
+      reguaNegociacaoId
+    );
+
+    const valorTaxa = valor * (reguaNegociacao.assessoria / 100);
 
     return this.create({
       lojistaId,
@@ -37,11 +49,22 @@ export class CarteiraResource extends BaseResource<CarteiraInstance> {
     });
   }
 
-  async registraLancamentos(data: { lojistaId: string; valor: number }) {
-    const { lojistaId, valor } = data;
+  async registraLancamentos(data: {
+    lojistaId: string;
+    reguaNegociacaoId: string;
+    documento: string;
+    nome: string;
+    valor: number;
+  }) {
+    const { lojistaId, reguaNegociacaoId, documento, nome, valor } = data;
 
-    await this.registrarRecebimento({ lojistaId, valor });
-    await this.registrarComissao({ lojistaId, valor });
+    await this.registrarRecebimento({
+      lojistaId,
+      documento,
+      nome,
+      valor,
+    });
+    await this.registrarComissao({ lojistaId, reguaNegociacaoId, valor });
   }
 
   async registrarSaque(data) {}

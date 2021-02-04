@@ -3,6 +3,7 @@ import Sequelize from 'sequelize';
 import sequelize from '../services/sequelize';
 
 import { ConsumidorInstance } from './Consumidor';
+import { ReguaNegociacaoInstance } from './ReguaNegociacao';
 import { ParcelaNegociacaoInstance } from './ParcelaNegociacao';
 
 export type NegociacaoInstance = {
@@ -10,6 +11,7 @@ export type NegociacaoInstance = {
   consumidorId: string;
   lojistaId: string;
   debitoId: string;
+  reguaNegociacaoId: string;
   dataRegistro: Date;
   divida: number;
   desconto: number;
@@ -22,6 +24,7 @@ export type NegociacaoInstance = {
   dataVencimento: Date;
   consumidor: ConsumidorInstance;
   parcelas: [ParcelaNegociacaoInstance];
+  reguaNegociacao: ReguaNegociacaoInstance;
   createdAt?: Date;
   updatedAt?: Date;
 };
@@ -74,6 +77,10 @@ Negociacao.associate = (models) => {
   Negociacao.belongsTo(models.Debito, {
     foreignKey: 'debitoId',
     as: 'debito',
+  });
+  Negociacao.belongsTo(models.ReguaNegociacao, {
+    foreignKey: 'reguaNegociacaoId',
+    as: 'reguaNegociacao',
   });
   Negociacao.hasMany(models.ParcelaNegociacao, {
     foreignKey: 'negociacaoId',
