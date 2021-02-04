@@ -7,8 +7,30 @@ import negociacaoResource from '../../../../resource/Negociacao';
 
 // models
 import Negociacao from '../../../../models/Negociacao';
+import Consumidor from '../../../../models/Consumidor';
+import Usuario from '../../../../models/Usuario';
 
 import queuedAsyncMap from '../../../../utils/queuedAsyncMap';
+
+const include = [
+  {
+    model: Negociacao,
+    as: 'negociacao',
+    include: [
+      {
+        model: Consumidor,
+        as: 'consumidor',
+        include: [
+          {
+            model: Usuario,
+            as: 'usuario',
+            attributes: ['nome'],
+          },
+        ],
+      },
+    ],
+  },
+];
 
 export default class PagamentoJob {
   async verificaParcelasFuturas() {
@@ -42,13 +64,7 @@ export default class PagamentoJob {
             situacao: 'pago',
           },
           {
-            include: [
-              {
-                model: Negociacao,
-                as: 'negociacao',
-                attributes: ['lojistaId'],
-              },
-            ],
+            include,
           }
         );
 
@@ -60,6 +76,9 @@ export default class PagamentoJob {
         // registrar os lancamentos (recebimento - comissao)
         await carteiraResource.registraLancamentos({
           lojistaId: parcelaNegociacao.negociacao.lojistaId,
+          reguaNegociacaoId: parcelaNegociacao.negociacao.reguaNegociacaoId,
+          documento: parcelaNegociacao.negociacao.consumidor.cpf,
+          nome: parcelaNegociacao.negociacao.consumidor.usuario.nome,
           valor: parcelaNegociacao.valorParcela,
         });
 

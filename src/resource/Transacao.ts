@@ -104,15 +104,6 @@ export class TransacaoResource extends BaseResource<TransacaoInstance> {
     return response;
   }
 
-  async registrarLancamentos(data: { lojistaId: string; valor: number }) {
-    const { lojistaId, valor } = data;
-
-    await carteiraResource.registrarComissao({
-      lojistaId,
-      valor,
-    });
-  }
-
   async transactionChanged(data) {
     const {
       id,
@@ -153,12 +144,18 @@ export class TransacaoResource extends BaseResource<TransacaoInstance> {
           });
 
           const negociacao = await negociacaoResource.findById(
-            transacao.negociacaoId
+            transacao.negociacaoId,
+            {
+              include: includeNegociacao,
+            }
           );
 
           // registrar o recebimento e a comissao
           await carteiraResource.registraLancamentos({
             lojistaId: negociacao.lojistaId,
+            reguaNegociacaoId: negociacao.reguaNegociacaoId,
+            documento: negociacao.consumidor.cpf,
+            nome: negociacao.consumidor.usuario.nome,
             valor: parcela.valorParcela,
           });
 
