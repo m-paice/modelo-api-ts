@@ -1,4 +1,4 @@
-import { Options, FindOptions } from 'sequelize';
+import { Options, FindOptions, CreateOptions } from 'sequelize';
 import BaseSequelizeRepository from '../repository/BaseRepository';
 
 import eventEmitters from '../services/eventEmitters';
@@ -97,16 +97,11 @@ export default class BaseResource<TModel extends Instance> {
     return this.getRepository().count(query);
   }
 
-  create(
-    data: Partial<TModel>,
-    options: IOptions<TModel> = {
-      dontEmit: false,
-    }
-  ): Promise<TModel> {
+  create(data: Partial<TModel>, options?: CreateOptions): Promise<TModel> {
     return this.getRepository()
       .create(data, options)
       .then((response) => {
-        if (!options.dontEmit) this.emitCreated(response);
+        this.emitCreated(response);
         return response;
       });
   }

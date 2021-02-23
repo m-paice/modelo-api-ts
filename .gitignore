@@ -4,5 +4,7 @@ build/
 
 .env
 
+src/tdlib
+
 uploads/*
 !uploads/.gitkeep

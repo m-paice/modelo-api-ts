@@ -1,14 +1,14 @@
-version: "3"
+version: '3'
 services:
   postgresql:
-    container_name: postgresql-credas
+    container_name: postgresql-telegram
     image: postgres:11.2-alpine
     command: postgres -c 'max_connections=500'
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: credas
+      POSTGRES_DB: telegram
     restart: always
-    shm_size: "256mb"
+    shm_size: '256mb'
     ports:
-      - 5432:5432
+      - 5435:5432

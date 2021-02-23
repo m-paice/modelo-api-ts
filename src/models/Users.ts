@@ -2,23 +2,24 @@ import Sequelize from 'sequelize';
 
 import sequelize from '../services/sequelize';
 
-export type ParceiroInstance = {
+export type UsersInstance = {
   id: string;
-  usuarioId: string;
-  descricao: string;
+  serviceId: string;
+  webhookUrl: string;
   createdAt?: Date;
   updatedAt?: Date;
 };
 
-const Parceiro = sequelize.define(
-  'Parceiro',
+const Users = sequelize.define(
+  'Users',
   {
     id: {
       type: Sequelize.UUID,
       defaultValue: Sequelize.UUIDV4,
       primaryKey: true,
     },
-    descricao: Sequelize.STRING,
+    serviceId: Sequelize.STRING,
+    webhookUrl: Sequelize.STRING,
     createdAt: {
       type: Sequelize.DATE,
       allowNull: false,
@@ -29,15 +30,10 @@ const Parceiro = sequelize.define(
     },
   },
   {
-    tableName: 'parceiro',
+    tableName: 'users',
   }
 );
 
-Parceiro.associate = (models) => {
-  Parceiro.belongsTo(models.Usuario, {
-    foreignKey: 'usuarioId',
-    as: 'usuario',
-  });
-};
+Users.associate = (models) => {};
 
-export default Parceiro;
+export default Users;

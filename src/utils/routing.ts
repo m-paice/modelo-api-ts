@@ -2,10 +2,7 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { ServerResponse } from 'http';
 
 interface IRequest extends Request {
-  user: any;
-  consumidorId: string;
-  lojistaId: string;
-  associacaoId: string;
+  serviceId: string;
 }
 
 type HandlerFunction = (

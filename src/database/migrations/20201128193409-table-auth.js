@@ -1,24 +1,14 @@
 module.exports = {
   up: (queryInterface, Sequelize) =>
-    queryInterface.createTable('consumidor', {
+    queryInterface.createTable('users', {
       id: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true,
         allowNull: false,
       },
-      usuarioId: {
-        type: Sequelize.UUID,
-        allowNull: false,
-        references: {
-          model: 'usuario',
-          key: 'id',
-        },
-      },
-      cpf: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
+      serviceId: Sequelize.STRING,
+      webhookUrl: Sequelize.STRING,
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false,
@@ -29,5 +19,5 @@ module.exports = {
       },
     }),
 
-  down: (queryInterface, Sequelize) => queryInterface.dropTable('consumidor'),
+  down: (queryInterface, Sequelize) => queryInterface.dropTable('users'),
 };

@@ -1,15 +1,16 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "CommonJS",
     "declaration": true,
     "removeComments": true,
     "allowJs": true,
-    "target": "es5",
+    "target": "es6",
     "sourceMap": true,
     "outDir": "./build",
     "baseUrl": "./",
     "incremental": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "downlevelIteration": true
   },
   "exclude": ["node_modules", "build"],
   "include": ["src/**/*"]

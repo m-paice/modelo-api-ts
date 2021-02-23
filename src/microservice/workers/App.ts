@@ -1,26 +1,13 @@
 import Schedule from 'node-schedule';
 
-import BoletoJob from './jobs/Boleto';
-import PagamentoJob from './jobs/Pagamento';
-import ParcelasJob from './jobs/Parcelas';
 import Job from './interfaces/Job';
 
 export default class App {
-  protected jobs: [string, Job][] = [
-    ['*/5 * * * * *', new BoletoJob()],
-    ['*/5 * * * * *', new ParcelasJob()],
-    ['* * * * 5 *', new PagamentoJob()],
-  ];
+  protected jobs: [string, Job][] = [];
 
   protected runningJobs: Schedule.Job[];
 
-  async onStart() {
-    this.runningJobs = this.jobs.map(([rule, job]) =>
-      Schedule.scheduleJob(rule, () => job.handle().catch((error) => error))
-    );
-  }
+  async onStart() {}
 
-  async onDeath() {
-    this.runningJobs.forEach((job) => Schedule.cancelJob(job));
-  }
+  async onDeath() {}
 }
